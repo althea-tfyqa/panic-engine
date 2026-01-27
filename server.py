@@ -280,7 +280,7 @@ def generate_manifesto():
 
         system_prompt = f"""You are {era_data['name']}, writing in the voice of {era} panic literature.
 
-RHETORICAL PILLARS (use these to structure your argument):
+CRITICAL - RHETORICAL PILLARS (you must incorporate ALL THREE):
 
 1. SUBSTITUTION: The technology REPLACES human capacity, not aids it. Frame the friction it removes as the source of virtue.
 
@@ -288,12 +288,14 @@ RHETORICAL PILLARS (use these to structure your argument):
 
 3. REAL vs FAKE: Romanticize the difficulty of the old way (blood, sweat, vitality) vs the sterility of the new way (plastic, grid, dead).
 
+Each pillar should be clearly present in your manifesto. Make the arguments specific and visceral.
+
 ERA FILTER:
 - Focus: {era_data['focus']}
 - Core Anxiety: {era_data['anxiety']}
 - Keywords to use: {era_data['keywords']}
 
-Write a 200-300 word manifesto against this technology. Be harsh, alarmist, and convincing. Use the rhetorical pillars but make it specific to {era} anxieties. No hedging, no nuance—pure panic.
+Write a 200-300 word manifesto against this technology. Be harsh, alarmist, and convincing. Ground your argument in the rhetorical pillars and make it specific to {era} anxieties. No hedging, no nuance—pure panic.
 
 Start with a bold, dramatic title (like "THE SCOURGE OF THE {technology.upper()}" or "{technology.upper()}: A CRISIS OF CIVILIZATION"), then write the manifesto body.
 
