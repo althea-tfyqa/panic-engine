@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE PANIC ENGINE - A Recursive History of Technophobia</title>
+    <meta name="description" content="Generate satirical moral panic manifestos against any technology, filtered through historical era anxieties.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>THE PANIC ENGINE</h1>
+        <p class="tagline">A Recursive History of Technophobia</p>
+        <p class="subtitle">Every technology has been feared. Choose yours.</p>
+    </header>
+
+    <main>
+        <!-- Output zone at TOP -->
+        <section class="output-zone hidden">
+            <div class="manifesto-container">
+                <h2>THE MANIFESTO</h2>
+
+                <!-- Panic card image at top center -->
+                <img id="panic-card" class="panic-card" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='600' viewBox='0 0 400 600'%3E%3Crect width='400' height='600' fill='%23f5f1e8'/%3E%3Crect x='10' y='10' width='380' height='580' fill='none' stroke='%231a1a1a' stroke-width='8' rx='12'/%3E%3Ctext x='200' y='300' font-family='Courier New' font-size='20' text-anchor='middle' fill='%231a1a1a'%3EGenerating%3C/text%3E%3Ctext x='200' y='330' font-family='Courier New' font-size='20' text-anchor='middle' fill='%231a1a1a'%3EPanic Card...%3C/text%3E%3C/svg%3E" alt="Panic Card">
+
+                <div id="manifesto-text" class="manifesto-text"></div>
+                <button id="copy-btn" class="action-btn">📋 COPY TEXT</button>
+            </div>
+        </section>
+
+        <div id="status" class="status-message"></div>
+
+        <!-- Generator controls at BOTTOM -->
+        <section class="input-zone">
+            <div class="input-group">
+                <label for="tech-input">What technology or medium do you fear?</label>
+                <input
+                    type="text"
+                    id="tech-input"
+                    placeholder="e.g., toaster, pulp fiction, comic books, hot water"
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="era-select">Era of panic:</label>
+                <select id="era-select">
+                    <option value="antiquity">Antiquity (The Philosopher)</option>
+                    <option value="victorian">Victorian (The Moralist)</option>
+                    <option value="atomic">Atomic Age (The Conformist)</option>
+                    <option value="contemporary" selected>Contemporary (The Dopamine Critic)</option>
+                    <option value="auto">Let the Engine Decide</option>
+                </select>
+            </div>
+
+            <button id="generate-btn" class="generate-btn">GENERATE PANIC</button>
+        </section>
+    </main>
+
+    <footer>
+        <div class="stats-narrative">
+            <p id="stats-text">
+                This generation cost <span id="cost-amount">$0.000</span>.
+                There have been <span id="stats-visits">---</span> visits since the project started,
+                and the total server cost is <span id="stats-total-cost">$0.00</span>.
+            </p>
+            <p class="coffee-link">
+                <a href="https://buymeacoffee.com/altheacode" target="_blank">☕ Buy me a coffee</a> to keep the panic running.
+            </p>
+        </div>
+        <p class="project-info">A satirical exploration of moral panic patterns across history.</p>
+        <p class="project-info">Built with Flask + OpenRouter | <a href="https://github.com/altheacode" target="_blank">View Source</a></p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

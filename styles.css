@@ -1,0 +1,382 @@
+/* THE PANIC ENGINE - Vintage Propaganda Pamphlet Aesthetic */
+
+:root {
+    --paper: #f5f1e8;
+    --paper-dark: #ebe4d1;
+    --ink: #1a1a1a;
+    --ink-light: #4a4a4a;
+    --border: #000000;
+    --error: #8b0000;
+    --highlight: #a52a2a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Special Elite', 'Courier New', 'Courier', monospace;
+    line-height: 1.6;
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    border: 6px solid var(--border);
+    border-radius: 8px;
+    background: var(--paper);
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+
+h1 {
+    font-size: 2.5rem;
+    letter-spacing: 0.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    /* Inline/outline text effect like the sample cards */
+    text-shadow:
+        -2px -2px 0 var(--paper-dark),
+        2px -2px 0 var(--paper-dark),
+        -2px 2px 0 var(--paper-dark),
+        2px 2px 0 var(--paper-dark);
+}
+
+.tagline {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.08rem;
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-style: italic;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Input Zone - Card Style (now at bottom) */
+.input-zone {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 6px solid var(--border);
+    border-radius: 8px;
+    background: var(--paper);
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+    font-weight: bold;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 1rem;
+    background: var(--paper-dark);
+    color: var(--ink);
+    border: 3px solid var(--border);
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+}
+
+input[type="text"]:focus,
+select:focus {
+    outline: none;
+    background: #fff;
+    border-color: var(--ink);
+}
+
+.generate-btn {
+    width: 100%;
+    padding: 1.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    border: 4px solid var(--border);
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 0.2rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+}
+
+.generate-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+}
+
+.generate-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+.generate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.8; }
+}
+
+/* Output Zone - at top of page */
+.output-zone {
+    margin-bottom: 1.5rem;
+}
+
+.output-zone.hidden {
+    display: none;
+}
+
+.manifesto-container {
+    border: 6px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    background: var(--paper);
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.panic-card {
+    display: block;
+    max-width: 250px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 1.5rem auto;
+    border: 3px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+h2 {
+    font-size: 1.1rem;
+    letter-spacing: 0.15rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-weight: 900;
+    text-align: center;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0.4rem;
+}
+
+.manifesto-text {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+.manifesto-text h3 {
+    font-size: 1.4rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12rem;
+    text-align: center;
+}
+
+.manifesto-text p {
+    margin-bottom: 1rem;
+}
+
+.manifesto-text strong {
+    font-weight: 900;
+    color: var(--ink);
+}
+
+
+.action-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--paper-dark);
+    color: var(--ink);
+    border: 3px solid var(--border);
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+}
+
+.action-btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+/* Footer with narrative stats */
+.stats-narrative {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--paper-dark);
+    border: 2px solid var(--ink-light);
+    border-radius: 4px;
+}
+
+.stats-narrative p {
+    font-size: 0.8rem;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+.stats-narrative #cost-amount,
+.stats-narrative #stats-visits,
+.stats-narrative #stats-total-cost {
+    font-weight: bold;
+    color: var(--highlight);
+}
+
+.coffee-link {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+}
+
+.coffee-link a {
+    color: var(--ink);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.coffee-link a:hover {
+    text-decoration: underline;
+}
+
+.project-info {
+    margin-bottom: 0.5rem;
+}
+
+/* Status Messages */
+.status-message {
+    padding: 1rem;
+    margin-top: 2rem;
+    border: 3px solid var(--border);
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    background: var(--paper-dark);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.05rem;
+}
+
+.status-message.show {
+    display: block;
+}
+
+.status-message.error {
+    border-color: var(--error);
+    color: var(--error);
+    background: #fef5f5;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding-top: 2rem;
+    margin-top: 2rem;
+    border-top: 3px solid var(--border);
+    color: var(--ink-light);
+    font-size: 0.85rem;
+}
+
+footer a {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+        letter-spacing: 0.2rem;
+    }
+
+    header {
+        padding: 1.5rem;
+        border-width: 6px;
+    }
+
+    .panic-card {
+        max-width: 100%;
+    }
+
+    .cost-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+        letter-spacing: 0.15rem;
+    }
+
+    .tagline {
+        font-size: 0.9rem;
+    }
+
+    .cost-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .input-zone,
+    .manifesto-container,
+    .card-container,
+    .cost-zone {
+        padding: 1rem;
+    }
+}
+
+/* Add subtle texture overlay (optional) */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
+    z-index: -1;
+}
