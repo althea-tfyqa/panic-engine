@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font & Era Preview - The Panic Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Oswald:wght@400;500;700&family=Archivo+Black&family=Courier+Prime:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper: #f5f1e8;
+            --paper-dark: #ebe4d1;
+            --ink: #1a1a1a;
+            --ink-light: #4a4a4a;
+            --border: #000000;
+        }
+
+        body {
+            background: var(--paper);
+            color: var(--ink);
+            font-family: 'Special Elite', 'Courier New', monospace;
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            letter-spacing: 0.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow:
+                -2px -2px 0 var(--paper-dark),
+                2px -2px 0 var(--paper-dark),
+                -2px 2px 0 var(--paper-dark),
+                2px 2px 0 var(--paper-dark);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--ink-light);
+            margin-bottom: 3rem;
+        }
+
+        .preview-section {
+            margin-bottom: 3rem;
+            border: 6px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            background: var(--paper);
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--border);
+        }
+
+        .category-name {
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.15rem;
+        }
+
+        .font-name {
+            font-size: 0.85rem;
+            color: var(--ink-light);
+        }
+
+        .sample-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12rem;
+            text-align: center;
+        }
+
+        .sample-text {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+
+        /* Font category styles */
+        .font-industrial {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.03rem;
+        }
+
+        .font-industrial .sample-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .font-domestic {
+            font-family: 'Special Elite', 'Courier New', monospace;
+        }
+
+        .font-domestic .sample-text {
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .font-media {
+            font-family: 'Archivo Black', sans-serif;
+            letter-spacing: 0.02rem;
+        }
+
+        .font-media .sample-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .font-medical {
+            font-family: 'Courier Prime', 'Courier New', monospace;
+            letter-spacing: 0.01rem;
+        }
+
+        .font-medical .sample-text {
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .font-digital {
+            font-family: 'VT323', monospace;
+            letter-spacing: 0.02rem;
+        }
+
+        .font-digital .sample-text {
+            font-size: 1.25rem;
+            line-height: 1.7;
+        }
+
+        .era-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .era-card {
+            border: 4px solid var(--border);
+            border-radius: 6px;
+            padding: 1.5rem;
+            background: var(--paper-dark);
+        }
+
+        .era-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+        }
+
+        .era-card .era-description {
+            font-size: 0.85rem;
+            color: var(--ink-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .era-card .keywords {
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>FONT & ERA PREVIEW</h1>
+    <p class="subtitle">Visual reference for The Panic Engine's dynamic typefaces and rhetorical frameworks</p>
+
+    <!-- INDUSTRIAL -->
+    <div class="preview-section font-industrial">
+        <div class="preview-header">
+            <div class="category-name">Industrial</div>
+            <div class="font-name">Oswald</div>
+        </div>
+        <h3 class="sample-title">The Scourge of the Steam Engine</h3>
+        <p class="sample-text">
+            The machine does not aid us; it replaces the skilled hand with mechanical brutality.
+            Where once the craftsman knew the grain of wood and the temper of steel, now the factory floor echoes
+            with the mindless rhythm of automation. We have traded human mastery for industrial
+            servitude, and in doing so, we have surrendered our very souls to the tyranny of iron and steam.
+        </p>
+        <p class="sample-text">
+            The factory seduces with promises of efficiency, yet delivers only the slow death of
+            human dignity. Every gear that turns is another nail in the coffin of true craftsmanship.
+        </p>
+    </div>
+
+    <!-- DOMESTIC -->
+    <div class="preview-section font-domestic">
+        <div class="preview-header">
+            <div class="category-name">Domestic</div>
+            <div class="font-name">Special Elite</div>
+        </div>
+        <h3 class="sample-title">The Toaster: Destroyer of the Hearth</h3>
+        <p class="sample-text">
+            This infernal appliance has invaded the sacred space of the kitchen, rendering the
+            traditional breakfast ritual obsolete. Where once the family gathered around the warm stove, now they
+            stand isolated, waiting for the mechanical click that signals their departure from
+            authentic domestic life. The toaster does not serve the household—it atomizes it.
+        </p>
+        <p class="sample-text">
+            Each slice of bread that emerges from its metal chamber is a testament to our willing acceptance of
+            convenience over connection, speed over sustenance, plastic over tradition.
+        </p>
+    </div>
+
+    <!-- MEDIA -->
+    <div class="preview-section font-media">
+        <div class="preview-header">
+            <div class="category-name">Media</div>
+            <div class="font-name">Archivo Black</div>
+        </div>
+        <h3 class="sample-title">Comic Books: The Corruption of Youth</h3>
+        <p class="sample-text">
+            These garish pamphlets of depravity flood our newsstands, their lurid covers beckoning
+            innocent children toward moral ruin. Where once youth read uplifting literature and educational texts,
+            they now gorge themselves on tales of caped vigilantes and grotesque villains. The comic book does not
+            educate—it corrupts, replacing noble thought with base sensation.
+        </p>
+        <p class="sample-text">
+            Every page turned is another step away from civilization, another descent into the primitive world of
+            pictures over words, violence over virtue, entertainment over enlightenment.
+        </p>
+    </div>
+
+    <!-- MEDICAL -->
+    <div class="preview-section font-medical">
+        <div class="preview-header">
+            <div class="category-name">Medical</div>
+            <div class="font-name">Courier Prime</div>
+        </div>
+        <h3 class="sample-title">The Tyranny of the Pill</h3>
+        <p class="sample-text">
+            This synthetic capsule promises relief but delivers dependency. The pharmaceutical
+            industry has convinced us that our natural state requires chemical intervention, that the body's own
+            wisdom must be overridden by laboratory formulations. We have become test subjects in
+            a vast experiment, our biology reduced to a series of treatable conditions rather than
+            the complex interplay of life itself.
+        </p>
+        <p class="sample-text">
+            Each pill swallowed is an admission that we trust the algorithm of pharmaceutical
+            science more than the wisdom of our own flesh. We have medicalized existence itself.
+        </p>
+    </div>
+
+    <!-- DIGITAL -->
+    <div class="preview-section font-digital">
+        <div class="preview-header">
+            <div class="category-name">Digital</div>
+            <div class="font-name">VT323</div>
+        </div>
+        <h3 class="sample-title">The Algorithm: Architecture of Control</h3>
+        <p class="sample-text">
+            The algorithm does not serve us—it shapes us. Every click, every scroll, every digital
+            interaction feeds the machine that learns our patterns and exploits our vulnerabilities. We believe we
+            are making choices, but we are merely executing the predetermined pathways of engagement
+            optimization. The screen seduces with infinite content while stealing our capacity for
+            sustained attention, deep thought, authentic connection.
+        </p>
+        <p class="sample-text">
+            We have become data points in a vast extraction operation, our consciousness reduced to metrics,
+            our relationships mediated by profit-driven platforms. The algorithm does not need to enslave us—we
+            willingly submit to its subtle architecture of control.
+        </p>
+    </div>
+
+    <!-- ERA REFERENCE -->
+    <h1 style="margin-top: 4rem;">HISTORICAL ERAS</h1>
+    <p class="subtitle">Rhetorical frameworks and thematic concerns by era</p>
+
+    <div class="era-grid">
+        <div class="era-card">
+            <h3>Antiquity</h3>
+            <div class="era-description">Ancient philosophers worried about soul, memory, and truth</div>
+            <div class="keywords">Keywords: simulacrum, shadow, spirit, void, dialectic, essence</div>
+        </div>
+
+        <div class="era-card">
+            <h3>Victorian</h3>
+            <div class="era-description">19th century moralists worried about virtue, nature, and corruption</div>
+            <div class="keywords">Keywords: vapors, constitution, unseemly, artificial, godless, degeneracy</div>
+        </div>
+
+        <div class="era-card">
+            <h3>Atomic Age</h3>
+            <div class="era-description">1950s-60s worried about conformity, mass mind, and brainwashing</div>
+            <div class="keywords">Keywords: automation, programming, soft, dependent, the machine, conformist</div>
+        </div>
+
+        <div class="era-card">
+            <h3>Contemporary</h3>
+            <div class="era-description">Modern dopamine, attention, and capitalism concerns</div>
+            <div class="keywords">Keywords: algorithm, product, content, shriveled, counterfeit, extraction</div>
+        </div>
+    </div>
+
+</body>
+</html>

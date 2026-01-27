@@ -8,8 +8,10 @@ let currentManifestoPlainText = '';
 
 // DOM Elements
 const techInput = document.getElementById('tech-input');
-const eraSelect = document.getElementById('era-select');
+const styleSelect = document.getElementById('style-select');
+const modelSelect = document.getElementById('model-select');
 const generateBtn = document.getElementById('generate-btn');
+const indieStylesheet = document.getElementById('indie-styles');
 const outputZone = document.querySelector('.output-zone');
 const manifestoText = document.getElementById('manifesto-text');
 const panicCard = document.getElementById('panic-card');
@@ -32,6 +34,7 @@ async function init() {
     // Set up event listeners
     generateBtn.addEventListener('click', generatePanic);
     copyBtn.addEventListener('click', copyToClipboard);
+    styleSelect.addEventListener('change', switchStyle);
 
     // Allow Enter key in input
     techInput.addEventListener('keypress', (e) => {
@@ -75,7 +78,6 @@ function updateStatsDisplay(stats) {
 // Main generation orchestrator
 async function generatePanic() {
     const technology = techInput.value.trim();
-    const era = eraSelect.value;
 
     // Validation
     if (!technology) {
@@ -89,19 +91,49 @@ async function generatePanic() {
 
     // Show loading state
     generateBtn.disabled = true;
-    generateBtn.textContent = 'GENERATING PANIC...';
+    generateBtn.textContent = 'ANALYZING...';
     outputZone.classList.add('hidden');
     manifestoText.textContent = '';
-    panicCard.src = '';
+    // Remove existing panic card if present
+    const existingCard = document.getElementById('panic-card');
+    if (existingCard) {
+        existingCard.remove();
+    }
 
     try {
-        // Step 1: Generate manifesto
-        showStatus('Generating manifesto...');
-        const manifestoData = await generateManifesto(technology, era);
+        // Step 1: Generate manifesto (AI auto-selects era and category)
+        showStatus('Analyzing technology and selecting era...');
+        const manifestoData = await generateManifesto(technology);
 
         // Display manifesto as HTML immediately
         manifestoText.innerHTML = manifestoData.manifesto;
         currentManifestoPlainText = manifestoData.manifesto_plain || manifestoData.manifesto;
+
+        // Insert panic card after the h3 headline (so it floats within paragraphs, not headline)
+        const headline = manifestoText.querySelector('h3');
+        if (headline && !document.getElementById('panic-card')) {
+            const cardImg = document.createElement('img');
+            cardImg.id = 'panic-card';
+            cardImg.className = 'panic-card loading';
+            cardImg.src = '/images/placeholder-visualizing-panic.jpg';
+            cardImg.alt = 'Panic Card';
+            headline.insertAdjacentElement('afterend', cardImg);
+        } else if (document.getElementById('panic-card')) {
+            // Card already exists, just reset it
+            panicCard.src = '/images/placeholder-visualizing-panic.jpg';
+            panicCard.classList.remove('loaded');
+            panicCard.classList.add('loading');
+        }
+
+        // Apply dynamic font based on category
+        const category = manifestoData.category || 'domestic';
+        const manifestoContainer = document.querySelector('.manifesto-container');
+
+        // Remove any existing font classes
+        manifestoContainer.classList.remove('font-industrial', 'font-domestic', 'font-media', 'font-medical', 'font-digital');
+
+        // Add new font class
+        manifestoContainer.classList.add(`font-${category}`);
 
         // Update cost
         currentGenerationCost += manifestoData.cost;
@@ -110,15 +142,26 @@ async function generatePanic() {
         // Show output zone NOW (so manifesto is visible even if image fails)
         outputZone.classList.remove('hidden');
 
-        // Use the era returned from manifesto (in case it was "auto" and AI chose one)
-        const chosenEra = manifestoData.era || era;
+        // Use the era returned from manifesto
+        const chosenEra = manifestoData.era;
 
-        // Step 2: Generate image (use chosen era, not "auto")
+        // Step 2: Generate image (use chosen era, selected model, and visual style)
         showStatus('Generating panic card...');
-        const imageData = await generateImage(technology, chosenEra, currentManifestoPlainText);
+        const selectedModel = modelSelect.value;
+        const visualStyle = styleSelect.value;
+        const imageData = await generateImage(technology, chosenEra, currentManifestoPlainText, selectedModel, visualStyle);
 
-        // Display card
-        panicCard.src = imageData.image_url;
+        // Display card with loaded state
+        const panicCardElement = document.getElementById('panic-card');
+        if (panicCardElement) {
+            panicCardElement.src = imageData.image_url;
+
+            // Wait for image to actually load, then transition to loaded state
+            panicCardElement.onload = function() {
+                panicCardElement.classList.remove('loading');
+                panicCardElement.classList.add('loaded');
+            };
+        }
 
         // Update cost
         currentGenerationCost += imageData.cost;
@@ -140,11 +183,11 @@ async function generatePanic() {
 }
 
 // Generate manifesto via API
-async function generateManifesto(technology, era) {
+async function generateManifesto(technology) {
     const response = await fetch(`${API_BASE}/api/generate-manifesto`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ technology, era })
+        body: JSON.stringify({ technology })
     });
 
     if (!response.ok) {
@@ -156,11 +199,11 @@ async function generateManifesto(technology, era) {
 }
 
 // Generate image via API
-async function generateImage(technology, era, manifesto) {
+async function generateImage(technology, era, manifesto, model, visualStyle) {
     const response = await fetch(`${API_BASE}/api/generate-image`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ technology, era, manifesto })
+        body: JSON.stringify({ technology, era, manifesto, model, visualStyle })
     });
 
     if (!response.ok) {
@@ -236,6 +279,16 @@ function showStatus(message, isError = false) {
         setTimeout(() => {
             statusMessage.classList.remove('show');
         }, 5000);
+    }
+}
+
+// Switch visual style
+function switchStyle() {
+    const style = styleSelect.value;
+    if (style === 'indie') {
+        indieStylesheet.disabled = false;
+    } else {
+        indieStylesheet.disabled = true;
     }
 }
 

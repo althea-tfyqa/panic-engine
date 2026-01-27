@@ -25,6 +25,57 @@ body {
     min-height: 100vh;
 }
 
+/* Dynamic font categories based on technology type */
+.manifesto-container.font-industrial {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.03rem;
+}
+
+.manifesto-container.font-industrial .manifesto-text {
+    font-size: 1.15rem;
+    line-height: 1.8;
+}
+
+.manifesto-container.font-domestic {
+    font-family: 'Special Elite', 'Courier New', monospace;
+}
+
+.manifesto-container.font-domestic .manifesto-text {
+    font-size: 1.1rem;
+    line-height: 1.9;
+}
+
+.manifesto-container.font-media {
+    font-family: 'Archivo Black', sans-serif;
+    letter-spacing: 0.02rem;
+}
+
+.manifesto-container.font-media .manifesto-text {
+    font-size: 1.15rem;
+    line-height: 1.8;
+}
+
+.manifesto-container.font-medical {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    letter-spacing: 0.01rem;
+}
+
+.manifesto-container.font-medical .manifesto-text {
+    font-size: 1.1rem;
+    line-height: 1.9;
+}
+
+.manifesto-container.font-digital {
+    font-family: 'VT323', monospace;
+    letter-spacing: 0.02rem;
+}
+
+.manifesto-container.font-digital .manifesto-text {
+    font-size: 1.35rem;
+    line-height: 1.8;
+}
+
 header {
     text-align: center;
     margin-bottom: 1.5rem;
@@ -165,51 +216,78 @@ select:focus {
     box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
 }
 
+.manifesto-content {
+    overflow: auto; /* Clearfix for float */
+}
+
 .panic-card {
-    display: block;
-    max-width: 250px;
+    float: right;
+    max-width: 350px;
     width: 100%;
     height: auto;
-    margin: 0 auto 1.5rem auto;
+    margin: 0 0 1.5rem 1.5rem;
     border: 3px solid var(--border);
     border-radius: 4px;
     box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+}
+
+/* Loading state - lighter opacity with pulsing glow */
+.panic-card.loading {
+    opacity: 0.5;
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Loaded state - full opacity, bold presence */
+.panic-card.loaded {
+    opacity: 1;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.1), 0 0 25px rgba(255, 200, 0, 0.4);
+        opacity: 0.5;
+    }
+    50% {
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.2), 0 0 40px rgba(255, 80, 0, 0.6);
+        opacity: 0.7;
+    }
 }
 
 h2 {
-    font-size: 1.1rem;
-    letter-spacing: 0.15rem;
-    margin-bottom: 1rem;
+    font-size: 3.5rem;
+    letter-spacing: 0.25rem;
+    margin-bottom: 1.5rem;
     text-transform: uppercase;
     font-weight: 900;
     text-align: center;
-    border-bottom: 2px solid var(--border);
-    padding-bottom: 0.4rem;
+    border-bottom: 4px solid var(--border);
+    padding-bottom: 0.75rem;
 }
 
 .manifesto-text {
     margin-bottom: 1rem;
-    font-size: 0.95rem;
-    line-height: 1.8;
+    font-size: 1.1rem;
+    line-height: 1.9;
 }
 
 .manifesto-text h3 {
-    font-size: 1.4rem;
+    font-size: 2.5rem;
     font-weight: 900;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     text-transform: uppercase;
-    letter-spacing: 0.12rem;
+    letter-spacing: 0.2rem;
     text-align: center;
+    clear: both;
+    width: 100%;
 }
 
 .manifesto-text p {
     margin-bottom: 1rem;
 }
 
-.manifesto-text strong {
-    font-weight: 900;
-    color: var(--ink);
-}
 
 
 .action-btn {
@@ -336,7 +414,14 @@ footer a:hover {
     }
 
     .panic-card {
+        float: none;
         max-width: 100%;
+        margin: 0 auto 1.5rem auto;
+    }
+
+    /* Keep animations on mobile */
+    .panic-card.loading {
+        animation: pulseGlow 2s ease-in-out infinite;
     }
 
     .cost-grid {

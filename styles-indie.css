@@ -1,0 +1,170 @@
+/* INDIE COMICS STYLE - Contemporary, colorful, Daniel Clowes aesthetic */
+
+:root {
+    --paper: #f8f4e6;
+    --paper-dark: #e8dcc0;
+    --ink: #2d2d2d;
+    --ink-light: #6a6a6a;
+    --border: #2d2d2d;
+    --accent-yellow: #f4d03f;
+    --accent-blue: #7fb3d5;
+    --accent-pink: #f5b7b1;
+    --accent-coral: #ec7063;
+}
+
+body {
+    background: var(--paper);
+    background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,0,0,0.02) 40px, rgba(0,0,0,0.02) 41px);
+}
+
+header {
+    background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-coral) 100%);
+    border: 4px solid var(--border);
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
+}
+
+h1 {
+    color: var(--ink);
+    text-shadow:
+        3px 3px 0 rgba(255,255,255,0.5),
+        -1px -1px 0 var(--border);
+}
+
+.tagline {
+    color: var(--ink);
+    opacity: 0.85;
+}
+
+.subtitle {
+    color: var(--ink);
+    opacity: 0.7;
+}
+
+.input-zone {
+    background: #ffffff;
+    border: 4px solid var(--border);
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.1);
+}
+
+.generate-btn {
+    background: var(--accent-coral);
+    color: white;
+    border: 4px solid var(--border);
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.2);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+}
+
+.generate-btn:hover {
+    background: var(--accent-pink);
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+}
+
+.generate-btn:active {
+    transform: translate(5px, 5px);
+    box-shadow: none;
+}
+
+.manifesto-container {
+    background: #ffffff;
+    border: 4px solid var(--border);
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.1);
+}
+
+h2 {
+    background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-pink) 100%);
+    color: white;
+    border-bottom: none;
+    padding: 1rem;
+    margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    border-radius: 4px 4px 0 0;
+    clear: both;
+}
+
+.manifesto-content {
+    clear: both;
+}
+
+.panic-card {
+    max-width: 400px;
+    clear: right;
+}
+
+.manifesto-text h3 {
+    color: var(--accent-coral);
+    border-bottom: 3px solid var(--accent-yellow);
+    padding-bottom: 0.5rem;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.05);
+}
+
+.manifesto-text p {
+    color: var(--ink);
+}
+
+.panic-card {
+    border: 4px solid var(--border);
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.15);
+    border-radius: 8px;
+}
+
+.panic-card.loaded {
+    box-shadow: 6px 6px 0 var(--accent-yellow);
+}
+
+.action-btn {
+    background: var(--accent-blue);
+    color: white;
+    border: 3px solid var(--border);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+}
+
+.action-btn:hover {
+    background: var(--accent-yellow);
+    color: var(--ink);
+}
+
+.stats-narrative {
+    background: var(--accent-yellow);
+    border: 3px solid var(--border);
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.status-message {
+    background: var(--accent-pink);
+    border: 3px solid var(--border);
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.status-message.error {
+    background: var(--accent-coral);
+    color: white;
+    border-color: #c0392b;
+}
+
+footer {
+    border-top: 4px solid var(--border);
+    color: var(--ink-light);
+}
+
+/* Colorful accents for different font categories */
+.manifesto-container.font-industrial h2 {
+    background: linear-gradient(90deg, #5d6d7e 0%, #85929e 100%);
+}
+
+.manifesto-container.font-domestic h2 {
+    background: linear-gradient(90deg, var(--accent-yellow) 0%, #f39c12 100%);
+}
+
+.manifesto-container.font-media h2 {
+    background: linear-gradient(90deg, var(--accent-pink) 0%, var(--accent-coral) 100%);
+}
+
+.manifesto-container.font-medical h2 {
+    background: linear-gradient(90deg, #aed6f1 0%, var(--accent-blue) 100%);
+}
+
+.manifesto-container.font-digital h2 {
+    background: linear-gradient(90deg, #a569bd 0%, #8e44ad 100%);
+}

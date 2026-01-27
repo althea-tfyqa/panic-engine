@@ -85,7 +85,7 @@ def extract_image_url(api_response):
     return None
 
 def format_manifesto_as_html(text):
-    """Convert manifesto text to styled HTML, handling markdown bold syntax"""
+    """Convert manifesto text to styled HTML, stripping all markdown formatting"""
     import re
 
     lines = text.strip().split('\n')
@@ -94,8 +94,9 @@ def format_manifesto_as_html(text):
     # Check if first line is a title (all caps or starts with special formatting)
     if lines:
         first_line = lines[0].strip()
-        # Remove markdown bold from title
+        # Remove ALL markdown formatting from title
         first_line = re.sub(r'\*\*(.*?)\*\*', r'\1', first_line)
+        first_line = re.sub(r'\*(.*?)\*', r'\1', first_line)
 
         # If it looks like a title (all caps, short, or has special chars)
         if (first_line.isupper() or len(first_line) < 80) and first_line:
@@ -109,8 +110,9 @@ def format_manifesto_as_html(text):
         for line in remaining_lines:
             line = line.strip()
             if line:
-                # Convert markdown bold (**text**) to HTML strong tags
-                line = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', line)
+                # STRIP all markdown bold/italic formatting (no conversion to HTML)
+                line = re.sub(r'\*\*(.*?)\*\*', r'\1', line)
+                line = re.sub(r'\*(.*?)\*', r'\1', line)
                 current_paragraph.append(line)
             elif current_paragraph:
                 # Empty line signals end of paragraph
@@ -123,9 +125,9 @@ def format_manifesto_as_html(text):
 
     return '\n'.join(html_parts)
 
-def choose_era_for_technology(technology):
-    """Let AI choose the most appropriate era for a technology"""
-    print(f"\n=== CHOOSING ERA FOR: {technology} ===")
+def analyze_technology(technology):
+    """Analyze technology to determine era and visual category"""
+    print(f"\n=== ANALYZING TECHNOLOGY: {technology} ===")
     try:
         headers = {
             'Authorization': f'Bearer {OPENROUTER_API_KEY}',
@@ -134,17 +136,26 @@ def choose_era_for_technology(technology):
             'X-Title': 'The Panic Engine'
         }
 
-        prompt = f"""Given this technology: "{technology}"
+        prompt = f"""Analyze this technology: "{technology}"
 
-Which historical era would be MOST likely to have a moral panic about it?
+Determine TWO things:
 
-Choose ONE of these eras and respond with ONLY the era name (nothing else):
-- antiquity (ancient philosophers worried about soul/memory/truth)
-- victorian (19th century moralists worried about virtue/nature/corruption)
-- atomic (1950s-60s worried about conformity/mass mind/automation)
-- contemporary (modern dopamine/attention/capitalism concerns)
+1. Which historical era would be MOST likely to have a moral panic about it?
+   - antiquity (ancient philosophers worried about soul/memory/truth)
+   - victorian (19th century moralists worried about virtue/nature/corruption)
+   - atomic (1950s-60s worried about conformity/mass mind/automation)
+   - contemporary (modern dopamine/attention/capitalism concerns)
 
-Era:"""
+2. Which category does this technology belong to?
+   - industrial (engines, factories, heavy machinery, manufacturing)
+   - domestic (appliances, furniture, household items, cleaning tools)
+   - media (books, radio, comics, television, film, music)
+   - medical (pills, treatments, procedures, diagnostic tools)
+   - digital (computers, phones, software, algorithms, internet)
+
+Respond ONLY in this exact format (no extra text):
+era: [era name]
+category: [category name]"""
 
         payload = {
             'model': 'google/gemini-3-flash-preview',
@@ -153,32 +164,47 @@ Era:"""
             ]
         }
 
-        print("Calling OpenRouter to choose era...")
+        print("Calling OpenRouter to analyze technology...")
         response = requests.post(OPENROUTER_URL, json=payload, headers=headers)
-        print(f"Era selection response status: {response.status_code}")
+        print(f"Analysis response status: {response.status_code}")
 
         if response.status_code == 429:
-            print(f"❌ RATE LIMIT HIT in era selection - Response: {response.text}")
-            return 'contemporary'  # Fallback
+            print(f"❌ RATE LIMIT HIT in analysis - Response: {response.text}")
+            return {'era': 'contemporary', 'category': 'domestic'}
 
         response.raise_for_status()
 
         result = response.json()
-        chosen_era = result['choices'][0]['message']['content'].strip().lower()
+        analysis_text = result['choices'][0]['message']['content'].strip().lower()
+        print(f"Analysis result: {analysis_text}")
 
-        # Validate the response
-        valid_eras = ['antiquity', 'victorian', 'atomic', 'contemporary']
-        for era in valid_eras:
-            if era in chosen_era:
-                print(f"AI chose era: {era} for technology: {technology}")
-                return era
+        # Parse the response
+        era = 'contemporary'
+        category = 'domestic'
 
-        # Default fallback
-        return 'contemporary'
+        for line in analysis_text.split('\n'):
+            if 'era:' in line:
+                era_text = line.split('era:')[1].strip()
+                valid_eras = ['antiquity', 'victorian', 'atomic', 'contemporary']
+                for valid_era in valid_eras:
+                    if valid_era in era_text:
+                        era = valid_era
+                        break
+
+            if 'category:' in line:
+                cat_text = line.split('category:')[1].strip()
+                valid_categories = ['industrial', 'domestic', 'media', 'medical', 'digital']
+                for valid_cat in valid_categories:
+                    if valid_cat in cat_text:
+                        category = valid_cat
+                        break
+
+        print(f"✅ Analysis complete: era={era}, category={category}")
+        return {'era': era, 'category': category}
 
     except Exception as e:
-        print(f"Error choosing era: {str(e)}")
-        return 'contemporary'  # Fallback to contemporary
+        print(f"Error analyzing technology: {str(e)}")
+        return {'era': 'contemporary', 'category': 'domestic'}
 
 # Routes
 @app.route('/')
@@ -211,17 +237,16 @@ def generate_manifesto():
     try:
         data = request.json
         technology = data.get('technology', 'technology')
-        era = data.get('era', 'contemporary')
 
         print(f"\n=== MANIFESTO REQUEST ===")
         print(f"Technology: {technology}")
-        print(f"Era requested: {era}")
 
-        # If era is "auto", let the AI choose the most appropriate era
-        if era == 'auto':
-            print("Calling choose_era_for_technology...")
-            era = choose_era_for_technology(technology)
-            print(f"AI chose era: {era}")
+        # AI analyzes technology to determine era and category
+        analysis = analyze_technology(technology)
+        era = analysis['era']
+        category = analysis['category']
+
+        print(f"AI analysis: era={era}, category={category}")
 
         # Build era-specific system prompt
         era_prompts = {
@@ -270,9 +295,15 @@ ERA FILTER:
 
 Write a 200-300 word manifesto against this technology. Be harsh, alarmist, and convincing. Use the rhetorical pillars but make it specific to {era} anxieties. No hedging, no nuance—pure panic.
 
-Start with a bold, dramatic title (like "THE SCOURGE OF THE {technology.upper()}" or "{technology.upper()}: A CRISIS OF CIVILIZATION"), then write the manifesto body in 2-3 paragraphs.
+Start with a bold, dramatic title (like "THE SCOURGE OF THE {technology.upper()}" or "{technology.upper()}: A CRISIS OF CIVILIZATION"), then write the manifesto body.
 
-IMPORTANT: Use vivid, intense language but DO NOT overuse bold/emphasis formatting. Only bold 1-2 key terms per paragraph maximum, not every other word."""
+IMPORTANT FORMATTING:
+- Use SHORT paragraphs (2-4 sentences each) for contemporary readability
+- Include frequent line breaks between paragraphs
+- Write 4-6 short paragraphs instead of 2-3 long ones
+- Each paragraph should be punchy and focused
+- Use vivid, intense language
+- DO NOT use any markdown formatting (no **bold**, no *italics*). Write in plain text only."""
 
         # Call OpenRouter API
         headers = {
@@ -324,7 +355,8 @@ IMPORTANT: Use vivid, intense language but DO NOT overuse bold/emphasis formatti
                 'output': output_tokens
             },
             'cost': cost,
-            'era': era  # Return the chosen era so image generation can reuse it
+            'era': era,  # Return the chosen era so image generation can reuse it
+            'category': category  # Return category for dynamic font selection
         })
 
     except Exception as e:
@@ -333,22 +365,20 @@ IMPORTANT: Use vivid, intense language but DO NOT overuse bold/emphasis formatti
 
 @app.route('/api/generate-image', methods=['POST'])
 def generate_image():
-    """Generate panic card image using Flux Klein"""
+    """Generate panic card image using selected model and visual style"""
     try:
         data = request.json
         technology = data.get('technology', 'technology')
         era = data.get('era', 'contemporary')
         manifesto = data.get('manifesto', '')
+        model = data.get('model', 'google/gemini-3-pro-image-preview')
+        visual_style = data.get('visualStyle', 'vintage')
 
         print(f"\n=== IMAGE REQUEST ===")
         print(f"Technology: {technology}")
-        print(f"Era received: {era}")
-
-        # If era is "auto", let the AI choose the most appropriate era
-        # (This should rarely happen now since manifesto returns chosen era)
-        if era == 'auto':
-            print("⚠️ WARNING: Image endpoint still got 'auto' - this shouldn't happen!")
-            era = choose_era_for_technology(technology)
+        print(f"Era received from manifesto: {era}")
+        print(f"Model: {model}")
+        print(f"Visual Style: {visual_style}")
 
         # Build era-specific visual style
         era_styles = {
@@ -358,14 +388,38 @@ def generate_image():
             'contemporary': 'smartphone screens, wifi symbols, brain scans'
         }
 
-        visual_style = era_styles.get(era, era_styles['contemporary'])
+        era_visual_style = era_styles.get(era, era_styles['contemporary'])
 
-        # Build image prompt (NO TEXT - image generators can't render text well)
-        prompt = f"""A black and white ink illustration in vintage 1930s moral panic propaganda style. PORTRAIT orientation (taller than wide), aspect ratio 2:3 or 3:4, vertical format.
+        # Extract title and punchy quote from manifesto for indie cards
+        manifesto_lines = manifesto.split('\n')
+        manifesto_title = manifesto_lines[0] if manifesto_lines else f"THE {technology.upper()} MENACE"
 
-The central art features a {technology} with {visual_style}, rendered with heavy cross-hatching, woodcut textures, manic, grotesque facial expressions. High contrast vintage propaganda aesthetic, satirical and surreal.
+        # Extract a punchy outrage phrase (first sentence with strong language)
+        manifesto_body = ' '.join(manifesto_lines[1:]) if len(manifesto_lines) > 1 else manifesto
+        # Take first sentence or ~100 chars as the outrage phrase
+        outrage_phrase = manifesto_body[:150].split('.')[0] + '.'
 
-Thick black rounded border around entire image. Underground comix style. IMPORTANT: Portrait orientation, NOT square."""
+        print(f"Card title: {manifesto_title}")
+        print(f"Outrage phrase: {outrage_phrase}")
+
+        # Build image prompt based on selected visual style
+        if visual_style == 'indie':
+            # Contemporary indie comics style with text elements
+            prompt = f"""Design a propaganda card in contemporary indie comics style (Daniel Clowes, Adrian Tomine). Portrait orientation, vertical format.
+
+CARD STRUCTURE (top to bottom):
+1. TITLE at top: "{manifesto_title}" - bold, all caps, comic book lettering
+2. CENTRAL ILLUSTRATION: A flat-color illustration of a {technology} with {era_visual_style}. Clean line work, flat pastel colors (yellows, blues, pinks), simple geometric shapes, ironic deadpan tone. Style of indie graphic novels.
+3. OUTRAGE PHRASE at bottom: "{outrage_phrase}" - smaller text, all caps
+
+Overall aesthetic: Contemporary graphic novel, limited color palette, simple border, satirical tone. Portrait orientation."""
+        else:
+            # Vintage propaganda style (default) - no text, AI struggles with vintage lettering
+            prompt = f"""A black and white ink illustration in vintage 1930s moral panic propaganda style. Portrait orientation (taller than wide), vertical format.
+
+The central art features a {technology} with {era_visual_style}, rendered with heavy cross-hatching, woodcut textures, manic, grotesque facial expressions. High contrast vintage propaganda aesthetic, satirical and surreal.
+
+Thick black rounded border around entire image. Underground comix style. Portrait orientation, NOT square."""
 
         # Call OpenRouter API using chat completions (same as text generation)
         headers = {
@@ -376,13 +430,10 @@ Thick black rounded border around entire image. Underground comix style. IMPORTA
         }
 
         payload = {
-            'model': 'black-forest-labs/flux.2-klein-4b',
+            'model': model,
             'messages': [
                 {'role': 'user', 'content': prompt}
-            ],
-            # Try passing native FLUX parameters (OpenRouter may pass through)
-            'width': 832,   # Portrait 2:3 aspect ratio
-            'height': 1248  # 832x1248 = 2:3 portrait
+            ]
         }
 
         response = requests.post(OPENROUTER_URL, json=payload, headers=headers)
@@ -399,7 +450,7 @@ Thick black rounded border around entire image. Underground comix style. IMPORTA
             raise ValueError("No image URL found in response")
 
         # Fixed cost for image generation
-        cost = PRICING['flux_klein']
+        cost = PRICING['image_generation']
 
         # Update stats
         increment_generation(cost)
