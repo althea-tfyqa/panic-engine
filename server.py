@@ -140,17 +140,18 @@ def analyze_technology(technology):
 
 Determine TWO things:
 
-1. Which historical era would be MOST likely to have a moral panic about it?
-   - antiquity (ancient philosophers worried about soul/memory/truth)
-   - victorian (19th century moralists worried about virtue/nature/corruption)
-   - atomic (1950s-60s worried about conformity/mass mind/automation)
-   - contemporary (modern dopamine/attention/capitalism concerns)
+1. When did/would this technology cause the MOST cultural anxiety? Choose based on WHEN THE PANIC HAPPENED/WOULD HAPPEN:
+   - antiquity (ancient Greece/Rome) - for: writing, books, literacy, philosophy
+   - victorian (1800s-early 1900s) - for: bicycles, trains, photography, telegraphs
+   - atomic (1950s-1960s) - for: TV, comic books, rock music, processed foods, suburbs
+   - contemporary (1990s-now) - for: internet, phones, social media, streaming, AI, video games, modern appliances
+
+DEFAULT TO CONTEMPORARY for anything invented after 1970 or still commonly used today.
 
 2. Which category does this technology belong to?
    - industrial (engines, factories, heavy machinery, manufacturing)
    - domestic (appliances, furniture, household items, cleaning tools)
    - media (books, radio, comics, television, film, music)
-   - medical (pills, treatments, procedures, diagnostic tools)
    - digital (computers, phones, software, algorithms, internet)
 
 Respond ONLY in this exact format (no extra text):
@@ -365,6 +366,178 @@ IMPORTANT FORMATTING:
         print(f"Error generating manifesto: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/generate-quick-card', methods=['POST'])
+def generate_quick_card():
+    """Generate quick panic card: short text + square image (no text in image)"""
+    try:
+        data = request.json
+        technology = data.get('technology', 'technology')
+        model = data.get('model', 'google/gemini-3-pro-image-preview')
+        visual_style = data.get('visualStyle', 'vintage')
+
+        print(f"\n=== QUICK CARD REQUEST ===")
+        print(f"Technology: {technology}")
+
+        # AI analyzes technology to determine era and category
+        analysis = analyze_technology(technology)
+        era = analysis['era']
+        category = analysis['category']
+
+        print(f"AI analysis: era={era}, category={category}")
+
+        # Build era-specific system prompt for SHORT manifesto (150 words max)
+        era_prompts = {
+            'antiquity': {
+                'name': 'The Philosopher',
+                'focus': 'The Soul, Memory, Truth',
+                'keywords': 'simulacrum, shadow, spirit, void'
+            },
+            'victorian': {
+                'name': 'The Moralist',
+                'focus': 'Virtue, Nature, Hysteria',
+                'keywords': 'vapors, constitution, unseemly, artificial'
+            },
+            'atomic': {
+                'name': 'The Conformist Critic',
+                'focus': 'Individuality, Mass Mind',
+                'keywords': 'automation, programming, dependent, the machine'
+            },
+            'contemporary': {
+                'name': 'The Dopamine Critic',
+                'focus': 'Attention, Brain Chemistry',
+                'keywords': 'algorithm, product, shriveled, counterfeit'
+            }
+        }
+
+        era_data = era_prompts.get(era, era_prompts['contemporary'])
+
+        system_prompt = f"""You are {era_data['name']} from the {era} era, writing panic soundbites in the voice and vocabulary of that time period.
+
+Write a SOUNDBITE against {technology}. Maximum 40 words total.
+
+Your response MUST have this exact structure:
+- Line 1: Dramatic all-caps title (3-5 words)
+- Line 2: Single punchy sentence (30-35 words) expressing ONE vivid fear using {era}-era language
+
+CRITICAL: Use ONLY {era} anxieties about {era_data['focus']}.
+Use period-appropriate keywords: {era_data['keywords']}.
+Write in the tone, vocabulary, and concerns of the {era} era ONLY.
+Make it visceral and dramatic. ONE sentence only."""
+
+        user_prompt = f"Write a panic manifesto against: {technology}"
+
+        headers = {
+            'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'http://localhost:5001',
+            'X-Title': 'The Panic Engine - Quick Card'
+        }
+
+        payload = {
+            'model': 'google/gemini-3-flash-preview',
+            'messages': [
+                {'role': 'system', 'content': system_prompt},
+                {'role': 'user', 'content': user_prompt}
+            ]
+        }
+
+        print("Calling OpenRouter for short manifesto generation...")
+        response = requests.post(OPENROUTER_URL, json=payload, headers=headers)
+
+        if response.status_code == 429:
+            print(f"❌ RATE LIMIT HIT - Response: {response.text}")
+            return jsonify({'error': 'Rate limit exceeded. Please wait a moment.'}), 429
+
+        response.raise_for_status()
+
+        result = response.json()
+        manifesto_text = result['choices'][0]['message']['content'].strip()
+
+        # Track token usage
+        usage = result.get('usage', {})
+        input_tokens = usage.get('prompt_tokens', 0)
+        output_tokens = usage.get('completion_tokens', 0)
+
+        text_cost = (input_tokens * PRICING['gemini_flash']['input'] +
+                    output_tokens * PRICING['gemini_flash']['output'])
+
+        print(f"✅ Short manifesto generated ({output_tokens} tokens)")
+
+        # Extract title and passage
+        lines = manifesto_text.split('\n', 1)
+        title = lines[0].strip()
+        passage = lines[1].strip() if len(lines) > 1 else manifesto_text
+
+        # Generate SQUARE image with NO TEXT - just the visual
+        # White background so it blends with card
+        era_styles = {
+            'antiquity': 'ancient Greek pottery patterns, marble columns',
+            'victorian': 'ornate Victorian frames, steam engines',
+            'atomic': 'retro 1950s advertising, nuclear symbols',
+            'contemporary': 'smartphone screens, wifi symbols'
+        }
+
+        era_visual_style = era_styles.get(era, era_styles['contemporary'])
+
+        # Build image prompt - SQUARE format, NO TEXT, white background
+        image_prompt = f"""Create a square propaganda illustration of {technology}.
+
+REQUIREMENTS:
+- SQUARE FORMAT (1:1 aspect ratio, not portrait/landscape)
+- WHITE BACKGROUND (clean white, #FFFFFF)
+- NO TEXT - illustration only
+- Centered subject
+- {era_visual_style}
+
+STYLE: {visual_style} aesthetic - {"vintage 1930s propaganda, black & white ink, heavy cross-hatching" if visual_style == "vintage" else "contemporary indie comics, flat colors, pastels" if visual_style == "indie" else "mid-century modern, geometric shapes, limited color palette (navy, cyan, orange, magenta)"}
+
+Clean, bold, iconic image. Square format. White background."""
+
+        print(f"Generating square image with white background...")
+
+        payload = {
+            'model': model,
+            'messages': [
+                {'role': 'user', 'content': image_prompt}
+            ]
+        }
+
+        response = requests.post(OPENROUTER_URL, json=payload, headers=headers)
+        response.raise_for_status()
+
+        result = response.json()
+        print(f"Image API Response status: {response.status_code}")
+
+        # Extract image URL
+        image_url = extract_image_url(result)
+
+        if not image_url:
+            raise ValueError("No image URL found in response")
+
+        # Fixed cost for image generation
+        image_cost = PRICING['image_generation']
+        total_cost = text_cost + image_cost
+
+        # Update stats
+        increment_generation(total_cost)
+
+        return jsonify({
+            'title': title,
+            'passage': passage,
+            'image_url': image_url,
+            'era': era,
+            'category': category,
+            'cost': total_cost,
+            'tokens': {
+                'input': input_tokens,
+                'output': output_tokens
+            }
+        })
+
+    except Exception as e:
+        print(f"Error generating quick card: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/generate-image', methods=['POST'])
 def generate_image():
     """Generate panic card image using selected model and visual style"""
@@ -415,6 +588,22 @@ CARD STRUCTURE (top to bottom):
 3. OUTRAGE PHRASE at bottom: "{outrage_phrase}" - smaller text, all caps
 
 Overall aesthetic: Contemporary graphic novel, limited color palette, simple border, satirical tone. Portrait orientation."""
+
+        elif visual_style == 'midcentury':
+            # Mid-Century Modern 1950s-60s atomic age style
+            prompt = f"""Design a propaganda card in mid-century modern 1950s-60s atomic age style. Portrait orientation, vertical format.
+
+CARD STRUCTURE AND STYLE:
+1. TITLE at top: "{manifesto_title}" - bold sans-serif lettering, clean geometric type
+2. CENTRAL ILLUSTRATION: A stylized geometric illustration of a {technology} with {era_visual_style}.
+   - Limited color palette: navy blue (#0d2c40), cyan (#31c5da), orange (#f15a30), magenta (#c879b2), cream (#f6efe5)
+   - Clean lines, geometric shapes, atomic-age symbols (circles, starbursts, concentric rings)
+   - Sophisticated retro aesthetic like vintage educational filmstrips or 1960s science magazines
+   - Bold color blocking, minimalist modern design
+3. OUTRAGE PHRASE at bottom: "{outrage_phrase}" - clean sans-serif text
+
+Overall aesthetic: Mid-century modern graphic design, California modernist sophistication, atomic age optimism turned sinister. Clean, geometric, bold. Portrait orientation."""
+
         else:
             # Vintage propaganda style (default) - no text, AI struggles with vintage lettering
             prompt = f"""A black and white ink illustration in vintage 1930s moral panic propaganda style. Portrait orientation (taller than wide), vertical format.

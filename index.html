@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Oswald:wght@400;700&family=Archivo+Black&family=Courier+Prime:wght@400;700&family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="styles-indie.css" id="indie-styles" disabled>
+    <link rel="stylesheet" href="styles-midcentury.css" id="midcentury-styles" disabled>
 </head>
 <body>
     <header>
@@ -18,8 +19,27 @@
         <p class="subtitle">Every technology has been feared. Choose yours.</p>
     </header>
 
+    <!-- Compact Top Toolbar -->
+    <nav class="control-toolbar">
+        <input
+            type="text"
+            id="tech-input"
+            placeholder="e.g., toaster, comic books, hot water, smartphones, TikTok..."
+            autocomplete="off"
+            class="toolbar-input"
+        >
+        <button id="generate-btn" class="toolbar-generate-btn">GENERATE</button>
+    </nav>
+
     <main>
-        <!-- Output zone at TOP -->
+        <div id="status" class="status-message"></div>
+
+        <!-- Quick Card Output Zone - Multiple cards spread across screen -->
+        <section class="quick-card-zone" id="card-spread">
+            <!-- Cards will be added here dynamically -->
+        </section>
+
+        <!-- Full Manifesto Output zone -->
         <section class="output-zone hidden">
             <div class="manifesto-container">
                 <h2>THE MANIFESTO</h2>
@@ -33,42 +53,25 @@
                 <button id="copy-btn" class="action-btn">📋 COPY TEXT</button>
             </div>
         </section>
-
-        <div id="status" class="status-message"></div>
-
-        <!-- Generator controls at BOTTOM -->
-        <section class="input-zone">
-            <div class="input-group">
-                <label for="tech-input">What technology or medium do you fear?</label>
-                <input
-                    type="text"
-                    id="tech-input"
-                    placeholder="e.g., toaster, pulp fiction, comic books, hot water"
-                    autocomplete="off"
-                >
-            </div>
-
-            <div class="input-group">
-                <label for="style-select">Visual Style:</label>
-                <select id="style-select">
-                    <option value="vintage">Vintage Propaganda (1930s)</option>
-                    <option value="indie">Indie Comics (Contemporary)</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label for="model-select">Image Model (testing):</label>
-                <select id="model-select">
-                    <option value="google/gemini-3-pro-image-preview">Gemini 3 Pro Image</option>
-                    <option value="openai/gpt-5-image-mini">GPT-5 Image Mini</option>
-                </select>
-            </div>
-
-            <button id="generate-btn" class="generate-btn">GENERATE PANIC</button>
-        </section>
     </main>
 
     <footer>
+        <div class="footer-settings">
+            <label class="footer-label">Style:</label>
+            <select id="style-select" class="footer-select">
+                <option value="vintage">Vintage</option>
+                <option value="indie" selected>Indie</option>
+                <option value="midcentury">Mid-Century</option>
+            </select>
+
+            <label class="footer-label">Model:</label>
+            <select id="model-select" class="footer-select">
+                <option value="google/gemini-3-pro-image-preview">Gemini</option>
+                <option value="openai/gpt-5-image-mini">GPT-5</option>
+                <option value="black-forest-labs/flux.2-klein-4b" selected>Flux</option>
+            </select>
+        </div>
+
         <div class="stats-narrative">
             <p id="stats-text">
                 This generation cost <span id="cost-amount">$0.000</span>.

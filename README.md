@@ -1,52 +1,66 @@
 # THE PANIC ENGINE
 
-A satirical "Moral Panic Generator" that uses AI to create alarmist manifestos against any user-inputted technology, filtered through historical era anxieties—with dual visual styles and dynamic typography.
+Build your own deck of panic! A satirical "Moral Panic Trading Card Generator" that creates collectible soundbite cards expressing historical anxieties about any technology.
 
 ## Overview
 
 Every technology has been feared. From writing (Socrates warned it would destroy memory) to bicycles (Victorian doctors claimed they'd cause hysteria) to smartphones (today's dopamine panic), history repeats its patterns of technophobia.
 
-The Panic Engine lets you generate your own moral panic manifesto and propaganda card for any technology—real or imagined. The AI automatically chooses the appropriate historical era and visual style based on the technology itself, creating unique aesthetic experiences every time.
+The Panic Engine generates **collectible trading cards** with punchy panic soundbites. Each card features:
+- A dramatic title
+- A square propaganda illustration
+- A 30-35 word soundbite expressing one vivid fear
+- Period-appropriate vocabulary from the era
+
+**Build a collection**: Cards accumulate across the screen like being dealt playing cards. Generate multiple cards to see how different technologies get framed through different historical lenses.
 
 ## Features
 
-### Core Generation
-- **AI-Driven Era Selection**: The engine automatically analyzes your technology and chooses the most appropriate historical lens (antiquity/victorian/atomic/contemporary)
-- **Dynamic Manifesto Generation**: Alarmist text using era-specific rhetorical patterns and contemporary reading formats (4-6 short, scannable paragraphs)
-- **Propaganda Card Illustrations**: AI-generated images styled to match the selected visual aesthetic
+### Quick Card Mode (Default)
+- **Type & Generate**: Minimal interface—just enter a technology and click generate
+- **Accumulating Collection**: Each generation adds a new card to your spread (doesn't replace previous cards)
+- **Trading Card Format**: 240px wide portrait cards matching Magic/Pokemon dimensions
+- **Random Rotation**: Each card gets a slight tilt (-3° to +3°) for organic "dealt" feel
+- **Soundbite Generation**: Punchy 30-35 word panic statements (not long manifestos)
+- **Hover Effects**: Cards "lift up" when you hover over them
+
+### AI-Driven Intelligence
+- **Auto Era Selection**: AI analyzes when the panic would occur (not when invented)
+  - Antiquity: Writing, books, literacy → soul/memory/truth concerns
+  - Victorian: Bicycles, trains, photography → virtue/nature/corruption fears
+  - Atomic: TV, comic books, rock music → conformity/mass mind/automation worries
+  - Contemporary: Social media, smartphones, streaming → dopamine/attention/capitalism critiques
+- **Period-Specific Language**: Each era uses authentic vocabulary and concerns from that time period
+- **Category Detection**: Auto-identifies if technology is industrial/domestic/media/medical/digital
+- **Dynamic Fonts**: Five Google Fonts auto-selected based on category
 
 ### Visual Style System (CSS Zen Garden Pattern)
-Choose between two complete aesthetic modes:
+Three complete aesthetic modes available in footer settings:
 
-**Style 1: Vintage Propaganda (Default)**
-- Cream paper (#f5f1e8) with black ink aesthetic
-- Heavy borders, woodcut textures, B&W illustrations
-- 1930s-50s moral panic pamphlet feel
-- Grotesque expressions, underground comix influence
-
-**Style 2: Contemporary Indie Comics**
-- White backgrounds with pastel accent colors
-- Flat-color illustrations with clean line work
-- Gradient headers (blue→pink, yellow tones)
-- Category-specific accent colors (industrial/grey, domestic/yellow, media/pink, medical/blue, digital/purple)
+**Indie Comics (Default)**
+- Flat-color pastel illustrations
+- Clean line work, contemporary graphic novel aesthetic
+- Category-specific accent colors
 - Daniel Clowes / Adrian Tomine vibes
 
-### Dynamic Typography System
-Five Google Fonts automatically selected based on technology category:
-- **Industrial** (engines, machinery): Oswald - bold condensed sans
-- **Domestic** (appliances, household): Special Elite - typewriter feel
-- **Media** (books, comics, TV): Archivo Black - bold headlines
-- **Medical** (pills, procedures): Courier Prime - clinical coldness
-- **Digital** (algorithms, phones): VT323 - retro computer terminal
+**Vintage Propaganda**
+- B&W ink illustrations, woodcut textures
+- Heavy cross-hatching, grotesque expressions
+- 1930s-50s moral panic pamphlet feel
+- Underground comix influence
 
-Every generation looks visually distinct!
+**Mid-Century Modern**
+- Atomic age geometric shapes
+- Limited color palette (navy, cyan, orange, magenta)
+- Clean sophisticated 1950s-60s design
+- Educational filmstrip aesthetic
 
-### User Experience
-- **Loading State Animations**: Custom "VISUALIZING PANIC" placeholder with warm yellow/red pulsing glow
-- **Magazine-Style Layout**: Card floats within manifesto text (old-school editorial design)
-- **Real-Time Cost Tracking**: Transparent API usage display
-- **Anonymous Usage Stats**: Track total generations and server costs
-- **No friction UX**: Type technology name → AI does everything else
+### Technical Features
+- **Animated Loading States**: "Thinking dots" animation while generating
+- **Cost Accumulation**: Tracks total cost across all cards in session
+- **Anonymous Stats**: Server-wide visit and generation tracking
+- **Image Model Selection**: Choose between Gemini, GPT-5, or Flux (default) in footer
+- **Minimal UI**: Top toolbar is just input + generate button; settings tucked in footer
 
 ## Tech Stack
 
@@ -94,25 +108,47 @@ Or use the one-click launcher:
 
 ## Usage
 
-1. **Enter a technology** (e.g., "The Toaster", "Email", "Comic Books", "Hot Water")
-2. **Click "GENERATE PANIC"** - The AI automatically:
-   - Analyzes the technology to determine invention era/cultural context
-   - Selects the most appropriate historical era for moral panic framing
-   - Chooses matching font based on technology category
-   - Generates manifesto with era-specific rhetoric
-   - Creates propaganda card styled to match selected visual mode
-3. **Optional**: Toggle between Vintage Propaganda and Indie Comics styles using the style switcher
-4. **Copy manifesto text** or enjoy the visual card
+**Quick Card Mode (Default):**
+
+1. **Enter a technology** (e.g., "toaster", "comic books", "TikTok", "smartphones")
+2. **Click GENERATE**
+3. Watch your card appear with a slight random rotation
+4. **Generate more!** Each new card adds to your collection
+5. **Hover over cards** to see them lift up
+6. **Screenshot your spread** when you have a collection you like
+
+The AI automatically:
+- Detects when the panic would historically occur (not when invented)
+- Chooses appropriate era and period-specific vocabulary
+- Generates a 30-35 word soundbite
+- Creates a square propaganda illustration
+- Applies category-specific font
+- Styles card in current visual theme
+
+**Optional Settings (footer):**
+- Change visual style: Indie (default), Vintage, or Mid-Century
+- Change image model: Flux (default), Gemini, or GPT-5
+
+**Tips:**
+- Try mixing modern and historical technologies to see different eras
+- Generate 5-6 cards to build a collectible spread
+- Modern appliances default to "contemporary" era (dopamine/attention language)
+- Historical tech (bicycles, books) get their authentic era
 
 ## Cost Estimates
 
+Per Card:
 - Era Analysis (Gemini Flash, ~100 tokens): $0.0001
-- Manifesto (Gemini Flash, ~300 tokens): $0.0003
-- Image Generation: $0.015
-- **Total per generation: ~$0.0154**
+- Soundbite (Gemini Flash, ~50 tokens): $0.00015
+- Image Generation (Flux 2 Klein): $0.015
+- **Total per card: ~$0.0153**
 
-At 50 generations/day: ~$0.77/day or ~$23/month
-At 20 generations/day: ~$0.31/day or ~$9/month
+Session Costs:
+- 10 cards: $0.15
+- 20 cards: $0.31
+- 50 cards: $0.77
+
+Cost accumulates across all cards in your session and displays in the footer.
 
 ## Project Structure
 
@@ -223,33 +259,41 @@ Each historical era applies these pillars through period-specific anxieties and 
 
 This project showcases several interesting patterns:
 
-1. **AI-Driven UX**: Let AI make categorical decisions (era, font, category) instead of user dropdowns → less friction, more surprise
-2. **CSS Zen Garden Pattern**: Multiple visual themes over same HTML structure with stylesheet toggling
-3. **Dynamic Typography**: Font automatically selected based on AI-analyzed technology category
-4. **Style-Responsive Backend**: Server generates different image prompts based on frontend style selection
-5. **Progressive Enhancement**: Show manifesto immediately even if image generation is slow/fails
-6. **Contemporary Reading Patterns**: 4-6 short paragraphs instead of dense text walls
-7. **Loading State Choreography**: Animated placeholder → smooth transition to loaded state
-8. **Context Extraction**: Backend extracts structural elements (title, outrage phrase) from AI text for reuse in image prompts
+1. **Accumulating Collection Interface**: Cards append to the spread rather than replacing—builds a collection over time
+2. **Random Rotation for Organic Feel**: Each card gets -3° to +3° rotation to mimic physical card dealing
+3. **Trading Card Aspect Ratio**: 240px wide portrait format matches Magic/Pokemon card proportions
+4. **AI-Driven Era Detection**: "When did the panic happen?" logic, not "when was it invented?"—crucial for authentic tone
+5. **Soundbite Constraints**: 40-word maximum forces distillation to essence—better output than 150+ words
+6. **CSS Zen Garden Pattern**: Three visual themes over same HTML via stylesheet toggling
+7. **Dynamic Typography**: Five fonts auto-selected based on AI-analyzed technology category
+8. **Style-Responsive Backend**: Server generates different image prompts for each visual style
+9. **Animated Loading Dots**: CSS-only "..." animation provides feedback without JS timers
+10. **Progressive Defaults**: Minimal UI with best defaults (Indie + Flux); settings hidden in footer
+11. **Flex Grid Spread**: Cards naturally distribute across available screen space
+12. **Period-Specific Vocabulary**: Strengthened prompts ensure era-authentic language (no Victorian words for TikTok)
 
 ## Examples
 
-Try these technologies and media:
-- **Classic Panics**: "The Telephone", "Television", "Comic Books", "Jazz Music", "Video Games"
-- **Mundane Objects**: "The Toaster", "Spoon", "Umbrellas", "Shoelaces", "Hot Water"
-- **Modern Tech**: "The Cloud", "NFTs", "AI Chatbots", "Social Media", "Smartphones"
-- **Media Formats**: "Pulp Fiction", "Podcasts", "TikTok", "Memes", "E-Books"
-- **Absurdist**: "Left-Handed Pencils", "Sandwiches", "The Color Blue", "Tamagotchi"
+Try building a deck with these:
+- **Classic Panics**: "television", "comic books", "jazz music", "video games", "rock and roll"
+- **Modern Anxieties**: "TikTok", "smartphones", "streaming", "social media", "AI chatbots"
+- **Mundane Tech**: "toaster", "microwave", "hot water", "bicycles", "escalators"
+- **Media Formats**: "podcasts", "memes", "e-books", "audiobooks", "vlogs"
+- **Absurdist**: "left-handed pencils", "sandwiches", "the color blue", "bubble wrap"
+
+**Pro tip**: Mix eras in one session to see vocabulary shifts—generate "books" (antiquity language) next to "TikTok" (contemporary language) for striking contrast.
 
 ## Design Philosophy
 
-**Automated decision-making as UX**: The shift from user-controlled era selection to AI-automatic is intentional. Instead of "which era do you want?" (requires knowledge, creates decision paralysis), the system figures it out. Users provide minimal input (technology name) and get maximal output (era-appropriate manifesto in matching font with styled card). This is **generous software design**: do the hard work so users don't have to.
+**Collections > Single Artifacts**: The shift from "generate one manifesto" to "build a deck of cards" fundamentally changes engagement. Collections create replayability (users want variety), comparison (cards side-by-side show how framing differs), and shareability (screenshot a spread of 6 cards beats sharing one text blob). Each addition feels like progress, not replacement.
 
-**Visual variety as engagement**: Every generation looks different because font changes based on category, era shifts tone, style switcher offers two aesthetics, and illustrations are unique. This creates compulsive replayability—users want to see how different technologies get styled.
+**Constraints Drive Quality**: Forcing soundbites to 40 words made output sharper. The AI can't ramble—it distills to the single most vivid image or claim. Sometimes the best way to improve AI output is to restrict it more severely.
 
-**Contemporary reading patterns**: Short paragraphs, scannable text, visual breaks aren't dumbing down—they're respecting how people consume content in 2026. The manifesto is more likely to be read because it's formatted for modern attention spans.
+**Defaults as Design**: Moving settings to the footer isn't just clean UI—it's designing the default experience. By choosing Indie + Flux, we're saying "this is the intended aesthetic." Power users can change it, but most users get the curated experience. This is generous software: make the right choices so users don't have to think.
 
-**CSS as design system**: The Zen Garden approach means the same HTML can look radically different. This enables A/B testing aesthetics, user preferences, seasonal themes, and future expansions without touching backend logic.
+**Physical Metaphors in Digital UI**: Random rotation, hover lift, card accumulation—these invoke the physical experience of dealing and collecting trading cards. Digital doesn't have to feel digital. Skeuomorphism serves meaning when it taps into existing mental models people already understand.
+
+**Era Timing Matters**: Contemporary technologies need contemporary vocabulary. Using Victorian language for smartphones is funny once, but breaks immersion. The panic needs to sound like it came from the right time period to feel authentic—that means defaulting post-1970 tech to "contemporary" era.
 
 ## License
 
