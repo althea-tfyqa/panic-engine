@@ -73,8 +73,8 @@ Three complete aesthetic modes available in footer settings:
 - **Backend**: Flask (Python) with OpenRouter API proxy
 - **Frontend**: Pure HTML/CSS/JS (no build step, CSS Zen Garden pattern)
 - **AI Models via OpenRouter**:
-  - Text Generation: `anthropic/claude-3.5-sonnet` (~$0.003-0.015/1K tokens)
-  - Era Analysis: `anthropic/claude-3.5-sonnet` (minimal tokens)
+  - Text Generation: `anthropic/claude-sonnet-4.5` (~$0.003-0.015/1K tokens)
+  - Era Analysis: `anthropic/claude-sonnet-4.5` (minimal tokens)
   - Image Generation: `black-forest-labs/flux.2-klein-4b` or `google/gemini-3-pro-image-preview` or `openai/gpt-5-image-mini` (~$0.015/image)
 - **Typography**: Google Fonts mapped to historical eras (Oswald, Special Elite, Archivo Black, Courier Prime)
 
@@ -145,8 +145,8 @@ The AI automatically:
 ## Cost Estimates
 
 Per Card:
-- Era Analysis (Claude Sonnet 3.5, ~150 tokens): $0.001
-- Panic Text (Claude Sonnet 3.5, ~200 tokens): $0.004
+- Era Analysis (Claude Sonnet 4.5, ~150 tokens): $0.001
+- Panic Text (Claude Sonnet 4.5, ~200 tokens): $0.004
 - Image Generation (Flux 2 Klein): $0.015
 - **Total per card: ~$0.020**
 

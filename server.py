@@ -173,7 +173,7 @@ era: [era name]
 historical_context: [if yes: 2-3 actual phrases/concerns from the real panic; if no: leave blank]"""
 
         payload = {
-            'model': 'anthropic/claude-3.5-sonnet',
+            'model': 'anthropic/claude-sonnet-4.5',
             'messages': [
                 {'role': 'user', 'content': prompt}
             ],
@@ -384,7 +384,7 @@ IMPORTANT FORMATTING:
         }
 
         payload = {
-            'model': 'anthropic/claude-3.5-sonnet',
+            'model': 'anthropic/claude-sonnet-4.5',
             'messages': [
                 {'role': 'user', 'content': f'{system_prompt}\n\nWrite a manifesto against: {technology}'}
             ],
@@ -555,7 +555,7 @@ Make it visceral and dramatic."""
         }
 
         payload = {
-            'model': 'anthropic/claude-3.5-sonnet',
+            'model': 'anthropic/claude-sonnet-4.5',
             'messages': [
                 {'role': 'user', 'content': f'{system_prompt}\n\n{user_prompt}'}
             ],
