@@ -48,9 +48,9 @@ def increment_generation(cost):
     return stats
 
 def calculate_text_cost(input_tokens, output_tokens):
-    """Calculate cost for text generation"""
-    input_cost = input_tokens * PRICING['gemini_flash']['input']
-    output_cost = output_tokens * PRICING['gemini_flash']['output']
+    """Calculate cost for text generation using Claude Sonnet 3.5"""
+    input_cost = input_tokens * PRICING['claude_sonnet']['input']
+    output_cost = output_tokens * PRICING['claude_sonnet']['output']
     return input_cost + output_cost
 
 def extract_image_url(api_response):
@@ -126,7 +126,7 @@ def format_manifesto_as_html(text):
     return '\n'.join(html_parts)
 
 def analyze_technology(technology):
-    """Analyze technology to determine era and visual category"""
+    """Analyze technology to determine era and check for real historical panic"""
     print(f"\n=== ANALYZING TECHNOLOGY: {technology} ===")
     try:
         headers = {
@@ -138,7 +138,26 @@ def analyze_technology(technology):
 
         prompt = f"""Analyze this technology: "{technology}"
 
-Determine which historical era would produce the MOST panic about this technology.
+STEP 1: Determine if there was a REAL historical moral panic about this technology.
+
+Ask yourself: "Did this technology actually cause documented moral panic or widespread anxiety in history?"
+
+Examples of REAL panics:
+- Comic books: Yes (1950s Wertham "Seduction of the Innocent")
+- Bicycles: Yes (Victorian concerns about women's virtue, "bicycle face")
+- Television: Yes (1950s-60s "boob tube" fears)
+- Video games: Yes (1990s violence panic, Columbine)
+- Rock music: Yes (1950s-60s moral corruption fears)
+- Social media: Yes (contemporary "Social Dilemma" era concerns)
+- Smartphones: Yes (contemporary dopamine/attention economy)
+
+Examples of NO real panic (absurd/mundane):
+- Paperclip: No
+- Toaster: No (maybe minor, but not documented panic)
+- Spoon: No
+- Bubble wrap: No
+
+STEP 2: Determine which historical era the panic occurred in (or would occur in).
 
 ERA DEFINITIONS (choose ONE):
    - antiquity (Ancient Greece/Rome, pre-1800) - ONLY for: writing, books, literacy, philosophy, scrolls
@@ -146,20 +165,19 @@ ERA DEFINITIONS (choose ONE):
    - atomic (20th century, 1900-1999) - for: TV, radio, comic books, rock music, video games, microwaves, processed foods, suburbs, computers (pre-internet)
    - contemporary (21st century, 2000-now) - for: social media, smartphones, streaming, AI, TikTok, modern internet technologies
 
-CRITICAL RULES:
-- Anything invented after 2000 = contemporary
-- Anything commonly used today (smartphones, social media, streaming) = contemporary
-- Video games = atomic (panic was 1970s-1990s arcade/console era)
-- Internet/web = atomic if referring to 1990s dialup, contemporary if referring to modern social media
+STEP 3: If real panic exists, provide 2-3 actual phrases or concerns from that historical panic.
 
-Respond ONLY in this exact format (no extra text):
-era: [era name]"""
+Respond in this exact format:
+real_panic: [yes/no]
+era: [era name]
+historical_context: [if yes: 2-3 actual phrases/concerns from the real panic; if no: leave blank]"""
 
         payload = {
-            'model': 'google/gemini-3-flash-preview',
+            'model': 'anthropic/claude-3.5-sonnet',
             'messages': [
                 {'role': 'user', 'content': prompt}
-            ]
+            ],
+            'temperature': 0.7  # Lower temp for consistent era detection
         }
 
         print("Calling OpenRouter to analyze technology...")
@@ -168,32 +186,49 @@ era: [era name]"""
 
         if response.status_code == 429:
             print(f"❌ RATE LIMIT HIT in analysis - Response: {response.text}")
-            return {'era': 'contemporary', 'category': 'domestic'}
+            return {'era': 'contemporary', 'real_panic': False, 'historical_context': ''}
 
         response.raise_for_status()
 
         result = response.json()
-        analysis_text = result['choices'][0]['message']['content'].strip().lower()
+        analysis_text = result['choices'][0]['message']['content'].strip()
         print(f"Analysis result: {analysis_text}")
 
         # Parse the response
         era = 'contemporary'
+        real_panic = False
+        historical_context = ''
 
         for line in analysis_text.split('\n'):
-            if 'era:' in line:
-                era_text = line.split('era:')[1].strip()
+            line_lower = line.lower()
+
+            if 'real_panic:' in line_lower:
+                real_panic = 'yes' in line_lower
+
+            if 'era:' in line_lower:
+                era_text = line_lower.split('era:')[1].strip()
                 valid_eras = ['antiquity', 'victorian', 'atomic', 'contemporary']
                 for valid_era in valid_eras:
                     if valid_era in era_text:
                         era = valid_era
                         break
 
-        print(f"✅ Analysis complete: era={era}")
-        return {'era': era}
+            if 'historical_context:' in line_lower:
+                # Get everything after "historical_context:" (preserve case for this)
+                context_text = line.split('historical_context:')[1].strip()
+                if context_text and context_text.lower() not in ['none', 'n/a', '']:
+                    historical_context = context_text
+
+        print(f"✅ Analysis complete: era={era}, real_panic={real_panic}, has_context={bool(historical_context)}")
+        return {
+            'era': era,
+            'real_panic': real_panic,
+            'historical_context': historical_context
+        }
 
     except Exception as e:
         print(f"Error analyzing technology: {str(e)}")
-        return {'era': 'contemporary'}
+        return {'era': 'contemporary', 'real_panic': False, 'historical_context': ''}
 
 # Routes
 @app.route('/')
@@ -230,11 +265,13 @@ def generate_manifesto():
         print(f"\n=== MANIFESTO REQUEST ===")
         print(f"Technology: {technology}")
 
-        # AI analyzes technology to determine era
+        # AI analyzes technology to determine era and check for real panic
         analysis = analyze_technology(technology)
         era = analysis['era']
+        real_panic = analysis.get('real_panic', False)
+        historical_context = analysis.get('historical_context', '')
 
-        print(f"AI analysis: era={era}")
+        print(f"AI analysis: era={era}, real_panic={real_panic}")
 
         # Build era-specific system prompt
         era_prompts = {
@@ -243,38 +280,70 @@ def generate_manifesto():
                 'century': 'Ancient Greece/Rome (pre-1800)',
                 'focus': 'The Soul, Memory, Truth, The Gods, Virtue',
                 'anxiety': 'Illusion vs Reality, corruption of the spirit',
-                'keywords': 'soul, memory, simulacrum, shadow, spirit, void, the gods, virtue, corruption',
-                'forbidden': 'NO modern words: brain, dopamine, algorithm, content, product, automation, Victorian language'
+                'forbidden': 'NO modern words like: brain, dopamine, algorithm, content, product, automation, programming, engagement, vapors, hysteria'
             },
             'victorian': {
                 'name': 'A Victorian Moralist',
                 'century': '19th century (1800s)',
                 'focus': 'Moral Fiber, Nature, Propriety, Hygiene, Feminine Virtue',
                 'anxiety': 'Hysteria, Unnatural Speed, Moral Corruption',
-                'keywords': 'vapors, constitution, unseemly, artificial, godless, hysteria, improper, unnatural, degeneracy',
-                'forbidden': 'NO ancient Greek terms, NO 20th/21st century words like dopamine, algorithm, automation, content'
+                'forbidden': 'NO ancient Greek terms like: soul, simulacrum, void. NO 20th/21st century words like: dopamine, algorithm, automation, content, programming, brain rot, engagement'
             },
             'atomic': {
                 'name': 'A Mid-Century Social Critic',
                 'century': '20th century (1900-1999)',
                 'focus': 'Individualism, Mass Culture, Conformity, The Machine',
                 'anxiety': 'Becoming robots, loss of humanity, brainwashing, standardization',
-                'keywords': 'automation, programming, conformity, mass-produced, the machine, standardized, mechanized, dehumanizing',
-                'forbidden': 'NO 21st century language: dopamine, algorithm, content, product (as in "you are the product"), brain rot'
+                'forbidden': 'NO 21st century internet language like: dopamine, algorithm, content, product (as in "you are the product"), brain rot, engagement, surveillance capitalism, infinite scroll'
             },
             'contemporary': {
                 'name': 'A 21st Century Digital Critic',
                 'century': '21st century (2000-now)',
                 'focus': 'Attention Economy, Brain Chemistry, Platform Capitalism, Surveillance',
                 'anxiety': 'Brain rot, dopamine hijacking, algorithmic manipulation, you are the product',
-                'keywords': 'algorithm, dopamine, content, engagement, the product, brain rot, surveillance capitalism, engineered addiction, infinite scroll',
-                'forbidden': 'NO Victorian language (vapors, hysteria), NO ancient philosophy terms'
+                'forbidden': 'NO Victorian language like: vapors, hysteria, unseemly, constitution. NO ancient philosophy terms like: soul, simulacrum, void'
             }
         }
 
         era_data = era_prompts.get(era, era_prompts['contemporary'])
 
-        system_prompt = f"""You are {era_data['name']} writing in the {era_data['century']}.
+        # Build the system prompt based on whether we have real historical panic context
+        if real_panic and historical_context:
+            # Use REAL historical panic language
+            system_prompt = f"""You are {era_data['name']} writing in the {era_data['century']}.
+
+CRITICAL: This technology had a REAL documented moral panic in history.
+Historical context from the actual panic: {historical_context}
+
+CRITICAL - RHETORICAL PILLARS (you must incorporate ALL THREE):
+
+1. SUBSTITUTION: The technology REPLACES human capacity, not aids it. Frame the friction it removes as the source of virtue.
+
+2. AGENT OF ATROPHY: The technology is predatory. It "seduces," "demands," "steals." The user is passive victim.
+
+3. REAL vs FAKE: Romanticize the difficulty of the old way (blood, sweat, vitality) vs the sterility of the new way (plastic, grid, dead).
+
+AUTHENTICITY REQUIREMENT:
+- Draw from the REAL historical panic language and concerns provided above
+- Use authentic vocabulary and arguments from that era's actual panic
+- Channel the genuine anxieties people expressed at the time
+- Echo the specific phrases and concerns from the historical context
+- Ground your argument in both the rhetorical pillars AND the real historical panic
+
+Write a 200-300 word manifesto against this technology using AUTHENTIC historical language. Be harsh, alarmist, and convincing. No hedging, no nuance—pure panic.
+
+Start with a bold, dramatic title (like "THE SCOURGE OF THE {technology.upper()}" or "{technology.upper()}: A CRISIS OF CIVILIZATION"), then write the manifesto body.
+
+IMPORTANT FORMATTING:
+- Use SHORT paragraphs (2-4 sentences each) for contemporary readability
+- Include frequent line breaks between paragraphs
+- Write 4-6 short paragraphs instead of 2-3 long ones
+- Each paragraph should be punchy and focused
+- Use vivid, intense language from the actual historical panic
+- DO NOT use any markdown formatting (no **bold**, no *italics*). Write in plain text only."""
+        else:
+            # Use synthetic panic framework
+            system_prompt = f"""You are {era_data['name']} writing in the {era_data['century']}.
 
 CRITICAL - RHETORICAL PILLARS (you must incorporate ALL THREE):
 
@@ -286,10 +355,11 @@ CRITICAL - RHETORICAL PILLARS (you must incorporate ALL THREE):
 
 VOCABULARY ENFORCEMENT - THIS IS CRITICAL:
 - You are writing in the {era_data['century']}
-- Focus ONLY on: {era_data['focus']}
-- Core anxieties: {era_data['anxiety']}
-- REQUIRED keywords to use: {era_data['keywords']}
+- Your concerns should be about: {era_data['focus']}
+- Core anxieties of this era: {era_data['anxiety']}
 - {era_data['forbidden']}
+- Use creative, vivid language appropriate to the {era_data['century']}
+- Don't repeat the same vocabulary patterns in every manifesto
 
 You MUST write ONLY in the vocabulary and concerns of the {era_data['century']}. Using vocabulary from other eras is FORBIDDEN and will ruin the output.
 
@@ -314,10 +384,11 @@ IMPORTANT FORMATTING:
         }
 
         payload = {
-            'model': 'google/gemini-3-flash-preview',
+            'model': 'anthropic/claude-3.5-sonnet',
             'messages': [
                 {'role': 'user', 'content': f'{system_prompt}\n\nWrite a manifesto against: {technology}'}
-            ]
+            ],
+            'temperature': 1.4  # Higher temp for creative variety
         }
 
         print(f"Calling OpenRouter for manifesto generation...")
@@ -374,62 +445,105 @@ def generate_quick_card():
         print(f"\n=== QUICK CARD REQUEST ===")
         print(f"Technology: {technology}")
 
-        # AI analyzes technology to determine era
+        # AI analyzes technology to determine era and check for real panic
         analysis = analyze_technology(technology)
         era = analysis['era']
+        real_panic = analysis.get('real_panic', False)
+        historical_context = analysis.get('historical_context', '')
 
-        print(f"AI analysis: era={era}")
+        print(f"AI analysis: era={era}, real_panic={real_panic}")
 
         # Build era-specific system prompt for SHORT soundbite
         era_prompts = {
             'antiquity': {
                 'name': 'An Ancient Philosopher',
                 'century': 'Ancient Greece/Rome',
-                'focus': 'The Soul, Memory, Truth',
-                'keywords': 'soul, memory, simulacrum, shadow, spirit, void, virtue, corruption',
-                'forbidden': 'NO modern words: brain, dopamine, algorithm, automation, vapors, hysteria'
+                'focus': 'The Soul, Memory, Truth, Virtue',
+                'forbidden': 'NO modern words like: brain, dopamine, algorithm, automation, programming, content, engagement, vapors, hysteria'
             },
             'victorian': {
                 'name': 'A Victorian Moralist',
                 'century': '19th century',
-                'focus': 'Moral Fiber, Propriety, Virtue',
-                'keywords': 'vapors, constitution, unseemly, artificial, hysteria, improper, degeneracy',
-                'forbidden': 'NO ancient or modern terms: soul, simulacrum, dopamine, algorithm, automation'
+                'focus': 'Moral Fiber, Propriety, Natural Order, Feminine Virtue',
+                'forbidden': 'NO ancient philosophy terms like: soul, simulacrum, void. NO 20th/21st century terms like: dopamine, algorithm, automation, programming, content, brain rot'
             },
             'atomic': {
-                'name': 'A Mid-Century Critic',
+                'name': 'A Mid-Century Social Critic',
                 'century': '20th century',
-                'focus': 'Individualism, Conformity, The Machine',
-                'keywords': 'automation, programming, conformity, the machine, standardized, dehumanizing',
-                'forbidden': 'NO 21st century words: dopamine, algorithm, content, brain rot'
+                'focus': 'Individualism vs Mass Society, Conformity, Dehumanization',
+                'forbidden': 'NO 21st century internet language like: dopamine, algorithm, content, brain rot, engagement, surveillance capitalism, infinite scroll'
             },
             'contemporary': {
-                'name': 'A Digital Age Critic',
+                'name': 'A 21st Century Digital Critic',
                 'century': '21st century',
-                'focus': 'Attention Economy, Brain Chemistry, Surveillance',
-                'keywords': 'algorithm, dopamine, content, engagement, brain rot, surveillance, addiction, infinite scroll',
-                'forbidden': 'NO Victorian or ancient language: vapors, hysteria, soul, simulacrum'
+                'focus': 'Attention Economy, Brain Chemistry, Platform Capitalism, Digital Surveillance',
+                'forbidden': 'NO Victorian language like: vapors, hysteria, unseemly, constitution. NO ancient philosophy like: soul, simulacrum, void'
             }
         }
 
         era_data = era_prompts.get(era, era_prompts['contemporary'])
 
-        system_prompt = f"""You are {era_data['name']} writing in the {era_data['century']}.
+        # Build the system prompt based on whether we have real historical panic context
+        if real_panic and historical_context:
+            # Use REAL historical panic language
+            system_prompt = f"""You are {era_data['name']} writing in the {era_data['century']}.
 
-Write a SOUNDBITE against {technology}. Maximum 40 words total.
+Write a PANIC TEXT against {technology}. 60-75 words.
 
-Your response MUST have this exact structure:
+CRITICAL: This technology had a REAL documented moral panic in history.
+Historical context from the actual panic: {historical_context}
+
+FORMAT:
 - Line 1: Dramatic all-caps title (3-5 words)
-- Line 2: Single punchy sentence (30-35 words) expressing ONE vivid fear
+- Line 2: Panic text (60-75 words)
+  - Can be 1-2 paragraphs (use a blank line between paragraphs if needed)
+  - Can vary in tone, structure, and approach
+
+AUTHENTICITY REQUIREMENT:
+- Draw from the REAL historical panic language and concerns provided above
+- Use authentic vocabulary and arguments from that era's actual panic
+- Channel the genuine anxieties people expressed at the time
+- Echo the specific phrases and concerns from the historical context
+
+CREATIVE VARIETY - Make each output genuinely different:
+- Try different modes: warning, lament, statistics, anecdote, testimonial, diagnosis
+- Try different structures: questions, commands, observations, predictions
+- Try different tones: clinical, hysterical, authoritative, mournful, outraged
+- Try different openings: quote, statistic, scene-setting, declaration, question
+- NEVER repeat the same sentence patterns or vocabulary across multiple cards
+- AVOID starting every text with "These" or "This"
+
+Use paragraph breaks strategically to create rhythm and emphasis. Make it visceral and dramatic using AUTHENTIC historical language."""
+        else:
+            # Use synthetic panic framework (for absurd/mundane items with no real panic)
+            system_prompt = f"""You are {era_data['name']} writing in the {era_data['century']}.
+
+Write a PANIC TEXT against {technology}. 60-75 words.
+
+FORMAT:
+- Line 1: Dramatic all-caps title (3-5 words)
+- Line 2: Panic text (60-75 words)
+  - Can be 1-2 paragraphs (use a blank line between paragraphs if needed)
+  - Can vary in tone, structure, and approach
 
 VOCABULARY ENFORCEMENT - THIS IS CRITICAL:
 - You are writing in the {era_data['century']}
-- Focus ONLY on: {era_data['focus']}
-- REQUIRED keywords to use: {era_data['keywords']}
+- Your concerns should be about: {era_data['focus']}
 - {era_data['forbidden']}
+- Use creative, vivid language appropriate to the {era_data['century']}
+- Don't repeat the same vocabulary patterns across multiple cards
 
-You MUST write ONLY in the vocabulary of the {era_data['century']}. Using vocabulary from other eras is FORBIDDEN.
-Make it visceral and dramatic. ONE sentence only for the soundbite."""
+CREATIVE VARIETY - Make each output genuinely different:
+- Try different modes: warning, lament, statistics, anecdote, testimonial, diagnosis, prophecy
+- Try different structures: questions, commands, observations, predictions, testimonials
+- Try different tones: clinical, hysterical, authoritative, mournful, outraged, sardonic
+- Try different openings: quote, statistic, scene-setting, declaration, question, command
+- NEVER repeat the same sentence patterns or vocabulary across multiple cards
+- AVOID starting every text with "These" or "This"
+- Be creative and surprising - this is about genuine variety, not filling a template
+
+Use paragraph breaks strategically to create rhythm and emphasis. You MUST write ONLY in the vocabulary of the {era_data['century']}. Using vocabulary from other eras is FORBIDDEN.
+Make it visceral and dramatic."""
 
         user_prompt = f"Write a panic manifesto against: {technology}"
 
@@ -441,11 +555,11 @@ Make it visceral and dramatic. ONE sentence only for the soundbite."""
         }
 
         payload = {
-            'model': 'google/gemini-3-flash-preview',
+            'model': 'anthropic/claude-3.5-sonnet',
             'messages': [
-                {'role': 'system', 'content': system_prompt},
-                {'role': 'user', 'content': user_prompt}
-            ]
+                {'role': 'user', 'content': f'{system_prompt}\n\n{user_prompt}'}
+            ],
+            'temperature': 1.4  # Higher temp for creative variety
         }
 
         print("Calling OpenRouter for short manifesto generation...")
@@ -465,8 +579,7 @@ Make it visceral and dramatic. ONE sentence only for the soundbite."""
         input_tokens = usage.get('prompt_tokens', 0)
         output_tokens = usage.get('completion_tokens', 0)
 
-        text_cost = (input_tokens * PRICING['gemini_flash']['input'] +
-                    output_tokens * PRICING['gemini_flash']['output'])
+        text_cost = calculate_text_cost(input_tokens, output_tokens)
 
         print(f"✅ Short manifesto generated ({output_tokens} tokens)")
 
@@ -506,7 +619,8 @@ Clean, bold, iconic image. Square format. White background."""
             'model': model,
             'messages': [
                 {'role': 'user', 'content': image_prompt}
-            ]
+            ],
+            'temperature': 1.2  # Some variety in image generation
         }
 
         response = requests.post(OPENROUTER_URL, json=payload, headers=headers)
@@ -630,7 +744,8 @@ Thick black rounded border around entire image. Underground comix style. Portrai
             'model': model,
             'messages': [
                 {'role': 'user', 'content': prompt}
-            ]
+            ],
+            'temperature': 1.2  # Some variety in image generation
         }
 
         response = requests.post(OPENROUTER_URL, json=payload, headers=headers)

@@ -6,10 +6,10 @@ Build your own deck of panic! A satirical "Moral Panic Trading Card Generator" t
 
 Every technology has been feared. From writing (Socrates warned it would destroy memory) to bicycles (Victorian doctors claimed they'd cause hysteria) to smartphones (today's dopamine panic), history repeats its patterns of technophobia.
 
-The Panic Engine generates **collectible trading cards** with punchy panic soundbites. Each card features:
+The Panic Engine generates **collectible trading cards** with varied panic texts. Each card features:
 - A dramatic title
 - A square propaganda illustration
-- A 30-35 word soundbite expressing one vivid fear
+- A 60-75 word panic text with varied structure and optional paragraph breaks
 - Period-appropriate vocabulary from the era
 
 **Build a collection**: Cards accumulate across the screen like being dealt playing cards. Generate multiple cards to see how different technologies get framed through different historical lenses.
@@ -19,20 +19,26 @@ The Panic Engine generates **collectible trading cards** with punchy panic sound
 ### Quick Card Mode (Default)
 - **Type & Generate**: Minimal interface—just enter a technology and click generate
 - **Accumulating Collection**: Each generation adds a new card to your spread (doesn't replace previous cards)
-- **Trading Card Format**: 240px wide portrait cards matching Magic/Pokemon dimensions
+- **Trading Card Format**: 360px wide cards with room for developed panic texts
 - **Random Rotation**: Each card gets a slight tilt (-3° to +3°) for organic "dealt" feel
-- **Soundbite Generation**: Punchy 30-35 word panic statements (not long manifestos)
+- **Panic Text Generation**: 60-75 word statements with varied structures and optional paragraph breaks
 - **Hover Effects**: Cards "lift up" when you hover over them
 
 ### AI-Driven Intelligence
+- **Historical Research Layer**: AI first checks if the technology had a *real* documented moral panic
+  - If yes: Uses authentic language from that actual historical panic (e.g., Wertham's "Seduction of the Innocent" for comic books)
+  - If no: Generates synthetic panic using rhetorical framework and era-appropriate vocabulary
 - **Auto Era Selection**: AI analyzes when the panic would occur (not when invented)
-  - Antiquity: Writing, books, literacy → soul/memory/truth concerns
-  - Victorian: Bicycles, trains, photography → virtue/nature/corruption fears
-  - Atomic: TV, comic books, rock music → conformity/mass mind/automation worries
-  - Contemporary: Social media, smartphones, streaming → dopamine/attention/capitalism critiques
-- **Period-Specific Language**: Each era uses authentic vocabulary and concerns from that time period
-- **Category Detection**: Auto-identifies if technology is industrial/domestic/media/medical/digital
-- **Dynamic Fonts**: Five Google Fonts auto-selected based on category
+  - Antiquity (pre-1800): Writing, books, literacy → soul/memory/truth concerns
+  - Victorian (19th century): Bicycles, trains, photography → virtue/hysteria/corruption fears
+  - Atomic (20th century): TV, comic books, rock music → conformity/mass mind/automation worries
+  - Contemporary (21st century): Social media, smartphones, streaming → dopamine/attention/surveillance capitalism
+- **Period-Specific Language**: Each era uses authentic vocabulary with explicit forbidden word lists to prevent cross-contamination
+- **Dynamic Fonts**: Era-based typography reinforces historical voice
+  - Antiquity → Courier Prime (classical monospace)
+  - Victorian → Special Elite (typewriter)
+  - Atomic → Archivo Black (mid-century modern)
+  - Contemporary → Oswald (modern sans-serif)
 
 ### Visual Style System (CSS Zen Garden Pattern)
 Three complete aesthetic modes available in footer settings:
@@ -67,10 +73,10 @@ Three complete aesthetic modes available in footer settings:
 - **Backend**: Flask (Python) with OpenRouter API proxy
 - **Frontend**: Pure HTML/CSS/JS (no build step, CSS Zen Garden pattern)
 - **AI Models via OpenRouter**:
-  - Text Generation: `google/gemini-3-flash-preview` (~$0.0003/1K tokens)
-  - Era Analysis: `google/gemini-3-flash-preview` (minimal tokens)
+  - Text Generation: `anthropic/claude-3.5-sonnet` (~$0.003-0.015/1K tokens)
+  - Era Analysis: `anthropic/claude-3.5-sonnet` (minimal tokens)
   - Image Generation: `black-forest-labs/flux.2-klein-4b` or `google/gemini-3-pro-image-preview` or `openai/gpt-5-image-mini` (~$0.015/image)
-- **Typography**: Google Fonts (Oswald, Special Elite, Archivo Black, Courier Prime, VT323)
+- **Typography**: Google Fonts mapped to historical eras (Oswald, Special Elite, Archivo Black, Courier Prime)
 
 ## Installation
 
@@ -118,11 +124,12 @@ Or use the one-click launcher:
 6. **Screenshot your spread** when you have a collection you like
 
 The AI automatically:
+- Checks for real historical panics and uses authentic language when available
 - Detects when the panic would historically occur (not when invented)
 - Chooses appropriate era and period-specific vocabulary
-- Generates a 30-35 word soundbite
+- Generates a 60-75 word panic text with varied structure
 - Creates a square propaganda illustration
-- Applies category-specific font
+- Applies era-specific font
 - Styles card in current visual theme
 
 **Optional Settings (footer):**
@@ -138,15 +145,15 @@ The AI automatically:
 ## Cost Estimates
 
 Per Card:
-- Era Analysis (Gemini Flash, ~100 tokens): $0.0001
-- Soundbite (Gemini Flash, ~50 tokens): $0.00015
+- Era Analysis (Claude Sonnet 3.5, ~150 tokens): $0.001
+- Panic Text (Claude Sonnet 3.5, ~200 tokens): $0.004
 - Image Generation (Flux 2 Klein): $0.015
-- **Total per card: ~$0.0153**
+- **Total per card: ~$0.020**
 
 Session Costs:
-- 10 cards: $0.15
-- 20 cards: $0.31
-- 50 cards: $0.77
+- 10 cards: $0.20
+- 20 cards: $0.40
+- 50 cards: $1.00
 
 Cost accumulates across all cards in your session and displays in the footer.
 
@@ -259,35 +266,44 @@ Each historical era applies these pillars through period-specific anxieties and 
 
 This project showcases several interesting patterns:
 
-1. **Accumulating Collection Interface**: Cards append to the spread rather than replacing—builds a collection over time
-2. **Random Rotation for Organic Feel**: Each card gets -3° to +3° rotation to mimic physical card dealing
-3. **Trading Card Aspect Ratio**: 240px wide portrait format matches Magic/Pokemon card proportions
-4. **AI-Driven Era Detection**: "When did the panic happen?" logic, not "when was it invented?"—crucial for authentic tone
-5. **Soundbite Constraints**: 40-word maximum forces distillation to essence—better output than 150+ words
-6. **CSS Zen Garden Pattern**: Three visual themes over same HTML via stylesheet toggling
-7. **Dynamic Typography**: Five fonts auto-selected based on AI-analyzed technology category
-8. **Style-Responsive Backend**: Server generates different image prompts for each visual style
-9. **Animated Loading Dots**: CSS-only "..." animation provides feedback without JS timers
-10. **Progressive Defaults**: Minimal UI with best defaults (Indie + Flux); settings hidden in footer
-11. **Flex Grid Spread**: Cards naturally distribute across available screen space
-12. **Period-Specific Vocabulary**: Strengthened prompts ensure era-authentic language (no Victorian words for TikTok)
+1. **Historical Research Layer**: Two-tier AI system—checks for real documented panics first, uses authentic historical language when available, falls back to synthetic framework for absurd inputs
+2. **Accumulating Collection Interface**: Cards append to the spread rather than replacing—builds a collection over time
+3. **Random Rotation for Organic Feel**: Each card gets -3° to +3° rotation to mimic physical card dealing
+4. **Trading Card Format**: 360px wide cards provide readability for longer panic texts while maintaining collectible aesthetic
+5. **AI-Driven Era Detection**: "When did the panic happen?" logic, not "when was it invented?"—crucial for authentic tone
+6. **Panic Text Length**: 60-75 words with paragraph break support allows development and variety while preventing rambling
+7. **CSS Zen Garden Pattern**: Three visual themes over same HTML via stylesheet toggling
+8. **Era-Based Typography**: Fonts mapped to historical periods (not categories) to reinforce historical voice through visual presentation
+9. **Dual Prompt System**: Different generation strategies for real vs synthetic panics—authenticity for documented history, creativity for fabricated scenarios
+10. **Model Selection Strategy**: Claude Sonnet 3.5 for creative variation vs Gemini Flash for speed—cost vs quality tradeoff
+11. **Forbidden Word Lists**: Explicit vocabulary restrictions prevent cross-era contamination (no "dopamine" in Victorian cards)
+12. **Style-Responsive Backend**: Server generates different image prompts for each visual style
+13. **Animated Loading Dots**: CSS-only "..." animation provides feedback without JS timers
+14. **Progressive Defaults**: Minimal UI with best defaults (Indie + Flux); settings hidden in footer
+15. **Flex Grid Spread**: Cards naturally distribute across available screen space
 
 ## Examples
 
 Try building a deck with these:
-- **Classic Panics**: "television", "comic books", "jazz music", "video games", "rock and roll"
-- **Modern Anxieties**: "TikTok", "smartphones", "streaming", "social media", "AI chatbots"
-- **Mundane Tech**: "toaster", "microwave", "hot water", "bicycles", "escalators"
-- **Media Formats**: "podcasts", "memes", "e-books", "audiobooks", "vlogs"
-- **Absurdist**: "left-handed pencils", "sandwiches", "the color blue", "bubble wrap"
 
-**Pro tip**: Mix eras in one session to see vocabulary shifts—generate "books" (antiquity language) next to "TikTok" (contemporary language) for striking contrast.
+**Real Historical Panics** (uses authentic language from documented panics):
+- **Classic**: "television", "comic books", "jazz music", "video games", "rock and roll"
+- **Victorian**: "bicycles", "trains", "photography", "novels"
+- **Modern**: "TikTok", "smartphones", "streaming", "social media"
+
+**Synthetic Panics** (uses rhetorical framework with era vocabulary):
+- **Mundane Tech**: "toaster", "microwave", "escalators", "paperclip"
+- **Absurdist**: "spoon", "left-handed pencils", "sandwiches", "bubble wrap"
+
+**Pro tips**:
+- Mix eras in one session to see vocabulary shifts—generate "books" (antiquity language) next to "TikTok" (contemporary language) for striking contrast
+- Compare real vs synthetic: Generate "comic books" (uses actual Wertham language) next to "toaster" (synthetic panic) to see the authenticity difference
 
 ## Design Philosophy
 
 **Collections > Single Artifacts**: The shift from "generate one manifesto" to "build a deck of cards" fundamentally changes engagement. Collections create replayability (users want variety), comparison (cards side-by-side show how framing differs), and shareability (screenshot a spread of 6 cards beats sharing one text blob). Each addition feels like progress, not replacement.
 
-**Constraints Drive Quality**: Forcing soundbites to 40 words made output sharper. The AI can't ramble—it distills to the single most vivid image or claim. Sometimes the best way to improve AI output is to restrict it more severely.
+**Length Finds Balance**: 60-75 words with paragraph support allows real development of ideas while preventing rambling. Too short (30 words) forces templates; too long (200+ words) loses focus. This sweet spot enables creative variety.
 
 **Defaults as Design**: Moving settings to the footer isn't just clean UI—it's designing the default experience. By choosing Indie + Flux, we're saying "this is the intended aesthetic." Power users can change it, but most users get the curated experience. This is generous software: make the right choices so users don't have to think.
 
