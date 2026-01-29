@@ -138,25 +138,22 @@ def analyze_technology(technology):
 
         prompt = f"""Analyze this technology: "{technology}"
 
-Determine TWO things:
+Determine which historical era would produce the MOST panic about this technology.
 
-1. When did/would this technology cause the MOST cultural anxiety? Choose based on WHEN THE PANIC HAPPENED/WOULD HAPPEN:
-   - antiquity (ancient Greece/Rome) - for: writing, books, literacy, philosophy
-   - victorian (1800s-early 1900s) - for: bicycles, trains, photography, telegraphs
-   - atomic (1950s-1960s) - for: TV, comic books, rock music, processed foods, suburbs
-   - contemporary (1990s-now) - for: internet, phones, social media, streaming, AI, video games, modern appliances
+ERA DEFINITIONS (choose ONE):
+   - antiquity (Ancient Greece/Rome, pre-1800) - ONLY for: writing, books, literacy, philosophy, scrolls
+   - victorian (19th century, 1800-1899) - for: bicycles, trains, photography, telegraphs, sewing machines, typewriters
+   - atomic (20th century, 1900-1999) - for: TV, radio, comic books, rock music, video games, microwaves, processed foods, suburbs, computers (pre-internet)
+   - contemporary (21st century, 2000-now) - for: social media, smartphones, streaming, AI, TikTok, modern internet technologies
 
-DEFAULT TO CONTEMPORARY for anything invented after 1970 or still commonly used today.
-
-2. Which category does this technology belong to?
-   - industrial (engines, factories, heavy machinery, manufacturing)
-   - domestic (appliances, furniture, household items, cleaning tools)
-   - media (books, radio, comics, television, film, music)
-   - digital (computers, phones, software, algorithms, internet)
+CRITICAL RULES:
+- Anything invented after 2000 = contemporary
+- Anything commonly used today (smartphones, social media, streaming) = contemporary
+- Video games = atomic (panic was 1970s-1990s arcade/console era)
+- Internet/web = atomic if referring to 1990s dialup, contemporary if referring to modern social media
 
 Respond ONLY in this exact format (no extra text):
-era: [era name]
-category: [category name]"""
+era: [era name]"""
 
         payload = {
             'model': 'google/gemini-3-flash-preview',
@@ -181,7 +178,6 @@ category: [category name]"""
 
         # Parse the response
         era = 'contemporary'
-        category = 'domestic'
 
         for line in analysis_text.split('\n'):
             if 'era:' in line:
@@ -192,20 +188,12 @@ category: [category name]"""
                         era = valid_era
                         break
 
-            if 'category:' in line:
-                cat_text = line.split('category:')[1].strip()
-                valid_categories = ['industrial', 'domestic', 'media', 'medical', 'digital']
-                for valid_cat in valid_categories:
-                    if valid_cat in cat_text:
-                        category = valid_cat
-                        break
-
-        print(f"✅ Analysis complete: era={era}, category={category}")
-        return {'era': era, 'category': category}
+        print(f"✅ Analysis complete: era={era}")
+        return {'era': era}
 
     except Exception as e:
         print(f"Error analyzing technology: {str(e)}")
-        return {'era': 'contemporary', 'category': 'domestic'}
+        return {'era': 'contemporary'}
 
 # Routes
 @app.route('/')
@@ -242,44 +230,51 @@ def generate_manifesto():
         print(f"\n=== MANIFESTO REQUEST ===")
         print(f"Technology: {technology}")
 
-        # AI analyzes technology to determine era and category
+        # AI analyzes technology to determine era
         analysis = analyze_technology(technology)
         era = analysis['era']
-        category = analysis['category']
 
-        print(f"AI analysis: era={era}, category={category}")
+        print(f"AI analysis: era={era}")
 
         # Build era-specific system prompt
         era_prompts = {
             'antiquity': {
-                'name': 'The Philosopher',
-                'focus': 'The Soul, Memory, Truth, The Gods',
-                'anxiety': 'Illusion vs Reality',
-                'keywords': 'simulacrum, shadow, spirit, void'
+                'name': 'An Ancient Philosopher',
+                'century': 'Ancient Greece/Rome (pre-1800)',
+                'focus': 'The Soul, Memory, Truth, The Gods, Virtue',
+                'anxiety': 'Illusion vs Reality, corruption of the spirit',
+                'keywords': 'soul, memory, simulacrum, shadow, spirit, void, the gods, virtue, corruption',
+                'forbidden': 'NO modern words: brain, dopamine, algorithm, content, product, automation, Victorian language'
             },
             'victorian': {
-                'name': 'The Moralist',
-                'focus': 'Virtue, Nature, Gender Roles, Hygiene',
-                'anxiety': 'Corruption, Hysteria, Unnatural Speed',
-                'keywords': 'vapors, constitution, unseemly, artificial, godless'
+                'name': 'A Victorian Moralist',
+                'century': '19th century (1800s)',
+                'focus': 'Moral Fiber, Nature, Propriety, Hygiene, Feminine Virtue',
+                'anxiety': 'Hysteria, Unnatural Speed, Moral Corruption',
+                'keywords': 'vapors, constitution, unseemly, artificial, godless, hysteria, improper, unnatural, degeneracy',
+                'forbidden': 'NO ancient Greek terms, NO 20th/21st century words like dopamine, algorithm, automation, content'
             },
             'atomic': {
-                'name': 'The Conformist Critic',
-                'focus': 'Individuality, The Mass Mind, Brainwashing',
-                'anxiety': 'Becoming robots/cogs',
-                'keywords': 'automation, programming, soft, dependent, the machine'
+                'name': 'A Mid-Century Social Critic',
+                'century': '20th century (1900-1999)',
+                'focus': 'Individualism, Mass Culture, Conformity, The Machine',
+                'anxiety': 'Becoming robots, loss of humanity, brainwashing, standardization',
+                'keywords': 'automation, programming, conformity, mass-produced, the machine, standardized, mechanized, dehumanizing',
+                'forbidden': 'NO 21st century language: dopamine, algorithm, content, product (as in "you are the product"), brain rot'
             },
             'contemporary': {
-                'name': 'The Dopamine Critic',
-                'focus': 'Attention, Neurochemistry, Capitalism',
-                'anxiety': 'Brain rot, corporate extraction',
-                'keywords': 'algorithm, product, content, shriveled, counterfeit'
+                'name': 'A 21st Century Digital Critic',
+                'century': '21st century (2000-now)',
+                'focus': 'Attention Economy, Brain Chemistry, Platform Capitalism, Surveillance',
+                'anxiety': 'Brain rot, dopamine hijacking, algorithmic manipulation, you are the product',
+                'keywords': 'algorithm, dopamine, content, engagement, the product, brain rot, surveillance capitalism, engineered addiction, infinite scroll',
+                'forbidden': 'NO Victorian language (vapors, hysteria), NO ancient philosophy terms'
             }
         }
 
         era_data = era_prompts.get(era, era_prompts['contemporary'])
 
-        system_prompt = f"""You are {era_data['name']}, writing in the voice of {era} panic literature.
+        system_prompt = f"""You are {era_data['name']} writing in the {era_data['century']}.
 
 CRITICAL - RHETORICAL PILLARS (you must incorporate ALL THREE):
 
@@ -289,14 +284,16 @@ CRITICAL - RHETORICAL PILLARS (you must incorporate ALL THREE):
 
 3. REAL vs FAKE: Romanticize the difficulty of the old way (blood, sweat, vitality) vs the sterility of the new way (plastic, grid, dead).
 
-Each pillar should be clearly present in your manifesto. Make the arguments specific and visceral.
+VOCABULARY ENFORCEMENT - THIS IS CRITICAL:
+- You are writing in the {era_data['century']}
+- Focus ONLY on: {era_data['focus']}
+- Core anxieties: {era_data['anxiety']}
+- REQUIRED keywords to use: {era_data['keywords']}
+- {era_data['forbidden']}
 
-ERA FILTER:
-- Focus: {era_data['focus']}
-- Core Anxiety: {era_data['anxiety']}
-- Keywords to use: {era_data['keywords']}
+You MUST write ONLY in the vocabulary and concerns of the {era_data['century']}. Using vocabulary from other eras is FORBIDDEN and will ruin the output.
 
-Write a 200-300 word manifesto against this technology. Be harsh, alarmist, and convincing. Ground your argument in the rhetorical pillars and make it specific to {era} anxieties. No hedging, no nuance—pure panic.
+Write a 200-300 word manifesto against this technology. Be harsh, alarmist, and convincing. Ground your argument in the rhetorical pillars and make it specific to {era} anxieties using ONLY {era} vocabulary. No hedging, no nuance—pure panic.
 
 Start with a bold, dramatic title (like "THE SCOURGE OF THE {technology.upper()}" or "{technology.upper()}: A CRISIS OF CIVILIZATION"), then write the manifesto body.
 
@@ -305,7 +302,7 @@ IMPORTANT FORMATTING:
 - Include frequent line breaks between paragraphs
 - Write 4-6 short paragraphs instead of 2-3 long ones
 - Each paragraph should be punchy and focused
-- Use vivid, intense language
+- Use vivid, intense language from the {era_data['century']}
 - DO NOT use any markdown formatting (no **bold**, no *italics*). Write in plain text only."""
 
         # Call OpenRouter API
@@ -358,8 +355,7 @@ IMPORTANT FORMATTING:
                 'output': output_tokens
             },
             'cost': cost,
-            'era': era,  # Return the chosen era so image generation can reuse it
-            'category': category  # Return category for dynamic font selection
+            'era': era  # Return the chosen era for image generation and font selection
         })
 
     except Exception as e:
@@ -378,51 +374,62 @@ def generate_quick_card():
         print(f"\n=== QUICK CARD REQUEST ===")
         print(f"Technology: {technology}")
 
-        # AI analyzes technology to determine era and category
+        # AI analyzes technology to determine era
         analysis = analyze_technology(technology)
         era = analysis['era']
-        category = analysis['category']
 
-        print(f"AI analysis: era={era}, category={category}")
+        print(f"AI analysis: era={era}")
 
-        # Build era-specific system prompt for SHORT manifesto (150 words max)
+        # Build era-specific system prompt for SHORT soundbite
         era_prompts = {
             'antiquity': {
-                'name': 'The Philosopher',
+                'name': 'An Ancient Philosopher',
+                'century': 'Ancient Greece/Rome',
                 'focus': 'The Soul, Memory, Truth',
-                'keywords': 'simulacrum, shadow, spirit, void'
+                'keywords': 'soul, memory, simulacrum, shadow, spirit, void, virtue, corruption',
+                'forbidden': 'NO modern words: brain, dopamine, algorithm, automation, vapors, hysteria'
             },
             'victorian': {
-                'name': 'The Moralist',
-                'focus': 'Virtue, Nature, Hysteria',
-                'keywords': 'vapors, constitution, unseemly, artificial'
+                'name': 'A Victorian Moralist',
+                'century': '19th century',
+                'focus': 'Moral Fiber, Propriety, Virtue',
+                'keywords': 'vapors, constitution, unseemly, artificial, hysteria, improper, degeneracy',
+                'forbidden': 'NO ancient or modern terms: soul, simulacrum, dopamine, algorithm, automation'
             },
             'atomic': {
-                'name': 'The Conformist Critic',
-                'focus': 'Individuality, Mass Mind',
-                'keywords': 'automation, programming, dependent, the machine'
+                'name': 'A Mid-Century Critic',
+                'century': '20th century',
+                'focus': 'Individualism, Conformity, The Machine',
+                'keywords': 'automation, programming, conformity, the machine, standardized, dehumanizing',
+                'forbidden': 'NO 21st century words: dopamine, algorithm, content, brain rot'
             },
             'contemporary': {
-                'name': 'The Dopamine Critic',
-                'focus': 'Attention, Brain Chemistry',
-                'keywords': 'algorithm, product, shriveled, counterfeit'
+                'name': 'A Digital Age Critic',
+                'century': '21st century',
+                'focus': 'Attention Economy, Brain Chemistry, Surveillance',
+                'keywords': 'algorithm, dopamine, content, engagement, brain rot, surveillance, addiction, infinite scroll',
+                'forbidden': 'NO Victorian or ancient language: vapors, hysteria, soul, simulacrum'
             }
         }
 
         era_data = era_prompts.get(era, era_prompts['contemporary'])
 
-        system_prompt = f"""You are {era_data['name']} from the {era} era, writing panic soundbites in the voice and vocabulary of that time period.
+        system_prompt = f"""You are {era_data['name']} writing in the {era_data['century']}.
 
 Write a SOUNDBITE against {technology}. Maximum 40 words total.
 
 Your response MUST have this exact structure:
 - Line 1: Dramatic all-caps title (3-5 words)
-- Line 2: Single punchy sentence (30-35 words) expressing ONE vivid fear using {era}-era language
+- Line 2: Single punchy sentence (30-35 words) expressing ONE vivid fear
 
-CRITICAL: Use ONLY {era} anxieties about {era_data['focus']}.
-Use period-appropriate keywords: {era_data['keywords']}.
-Write in the tone, vocabulary, and concerns of the {era} era ONLY.
-Make it visceral and dramatic. ONE sentence only."""
+VOCABULARY ENFORCEMENT - THIS IS CRITICAL:
+- You are writing in the {era_data['century']}
+- Focus ONLY on: {era_data['focus']}
+- REQUIRED keywords to use: {era_data['keywords']}
+- {era_data['forbidden']}
+
+You MUST write ONLY in the vocabulary of the {era_data['century']}. Using vocabulary from other eras is FORBIDDEN.
+Make it visceral and dramatic. ONE sentence only for the soundbite."""
 
         user_prompt = f"Write a panic manifesto against: {technology}"
 
@@ -526,7 +533,6 @@ Clean, bold, iconic image. Square format. White background."""
             'passage': passage,
             'image_url': image_url,
             'era': era,
-            'category': category,
             'cost': total_cost,
             'tokens': {
                 'input': input_tokens,

@@ -148,23 +148,19 @@ footer {
     color: var(--ink-light);
 }
 
-/* Colorful accents for different font categories */
-.manifesto-container.font-industrial h2 {
-    background: linear-gradient(90deg, #5d6d7e 0%, #85929e 100%);
-}
-
-.manifesto-container.font-domestic h2 {
-    background: linear-gradient(90deg, var(--accent-yellow) 0%, #f39c12 100%);
-}
-
-.manifesto-container.font-media h2 {
-    background: linear-gradient(90deg, var(--accent-pink) 0%, var(--accent-coral) 100%);
-}
-
-.manifesto-container.font-medical h2 {
+/* Colorful accents for different historical eras */
+.manifesto-container.font-antiquity h2 {
     background: linear-gradient(90deg, #aed6f1 0%, var(--accent-blue) 100%);
 }
 
-.manifesto-container.font-digital h2 {
+.manifesto-container.font-victorian h2 {
+    background: linear-gradient(90deg, var(--accent-yellow) 0%, #f39c12 100%);
+}
+
+.manifesto-container.font-atomic h2 {
+    background: linear-gradient(90deg, var(--accent-pink) 0%, var(--accent-coral) 100%);
+}
+
+.manifesto-container.font-contemporary h2 {
     background: linear-gradient(90deg, #a569bd 0%, #8e44ad 100%);
 }

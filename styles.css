@@ -93,54 +93,49 @@ main {
     padding: 2rem;
 }
 
-/* Dynamic font categories based on technology type */
-.manifesto-container.font-industrial {
+/* Dynamic fonts based on historical era */
+
+/* Antiquity: Ancient Greece/Rome - formal, classical */
+.manifesto-container.font-antiquity {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+    letter-spacing: 0.01rem;
+}
+
+.manifesto-container.font-antiquity .manifesto-text {
+    font-size: 1.1rem;
+    line-height: 1.9;
+}
+
+/* Victorian: 19th century - typewriter aesthetic */
+.manifesto-container.font-victorian {
+    font-family: 'Special Elite', 'Courier New', monospace;
+}
+
+.manifesto-container.font-victorian .manifesto-text {
+    font-size: 1.1rem;
+    line-height: 1.9;
+}
+
+/* Atomic: 20th century - bold mid-century modern */
+.manifesto-container.font-atomic {
+    font-family: 'Archivo Black', sans-serif;
+    letter-spacing: 0.02rem;
+}
+
+.manifesto-container.font-atomic .manifesto-text {
+    font-size: 1.15rem;
+    line-height: 1.8;
+}
+
+/* Contemporary: 21st century - clean modern sans-serif */
+.manifesto-container.font-contemporary {
     font-family: 'Oswald', sans-serif;
     font-weight: 500;
     letter-spacing: 0.03rem;
 }
 
-.manifesto-container.font-industrial .manifesto-text {
+.manifesto-container.font-contemporary .manifesto-text {
     font-size: 1.15rem;
-    line-height: 1.8;
-}
-
-.manifesto-container.font-domestic {
-    font-family: 'Special Elite', 'Courier New', monospace;
-}
-
-.manifesto-container.font-domestic .manifesto-text {
-    font-size: 1.1rem;
-    line-height: 1.9;
-}
-
-.manifesto-container.font-media {
-    font-family: 'Archivo Black', sans-serif;
-    letter-spacing: 0.02rem;
-}
-
-.manifesto-container.font-media .manifesto-text {
-    font-size: 1.15rem;
-    line-height: 1.8;
-}
-
-.manifesto-container.font-medical {
-    font-family: 'Courier Prime', 'Courier New', monospace;
-    letter-spacing: 0.01rem;
-}
-
-.manifesto-container.font-medical .manifesto-text {
-    font-size: 1.1rem;
-    line-height: 1.9;
-}
-
-.manifesto-container.font-digital {
-    font-family: 'VT323', monospace;
-    letter-spacing: 0.02rem;
-}
-
-.manifesto-container.font-digital .manifesto-text {
-    font-size: 1.35rem;
     line-height: 1.8;
 }
 
@@ -689,6 +684,44 @@ body::before {
 .quick-card-passage.loading::after {
     content: '';
     animation: thinkingDots 1.5s infinite;
+}
+
+/* Quick card font variations by era */
+.quick-card-display.font-antiquity {
+    font-family: 'Courier Prime', 'Courier New', monospace;
+}
+
+.quick-card-display.font-antiquity .quick-card-passage {
+    font-size: 0.75rem;
+    letter-spacing: 0.01rem;
+}
+
+.quick-card-display.font-victorian {
+    font-family: 'Special Elite', 'Courier New', monospace;
+}
+
+.quick-card-display.font-victorian .quick-card-passage {
+    font-size: 0.75rem;
+}
+
+.quick-card-display.font-atomic {
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.quick-card-display.font-atomic .quick-card-passage {
+    font-size: 0.7rem;
+    letter-spacing: 0.02rem;
+    font-weight: 700;
+}
+
+.quick-card-display.font-contemporary {
+    font-family: 'Oswald', sans-serif;
+}
+
+.quick-card-display.font-contemporary .quick-card-passage {
+    font-size: 0.75rem;
+    letter-spacing: 0.03rem;
+    font-weight: 500;
 }
 
 @keyframes thinkingDots {

@@ -138,15 +138,15 @@ async function generatePanic() {
             panicCard.classList.add('loading');
         }
 
-        // Apply dynamic font based on category
-        const category = manifestoData.category || 'domestic';
+        // Apply dynamic font based on era
+        const era = manifestoData.era || 'contemporary';
         const manifestoContainer = document.querySelector('.manifesto-container');
 
         // Remove any existing font classes
-        manifestoContainer.classList.remove('font-industrial', 'font-domestic', 'font-media', 'font-medical', 'font-digital');
+        manifestoContainer.classList.remove('font-antiquity', 'font-victorian', 'font-atomic', 'font-contemporary');
 
         // Add new font class
-        manifestoContainer.classList.add(`font-${category}`);
+        manifestoContainer.classList.add(`font-${era}`);
 
         // Update cost
         currentGenerationCost += manifestoData.cost;
@@ -245,9 +245,9 @@ async function generateQuickCardMode(technology) {
             imageElement.classList.remove('loading');
         };
 
-        // Apply dynamic font based on category
-        const category = cardData.category || 'domestic';
-        newCard.classList.add(`font-${category}`);
+        // Apply dynamic font based on era
+        const era = cardData.era || 'contemporary';
+        newCard.classList.add(`font-${era}`);
 
         // Update cost
         currentGenerationCost += cardData.cost;
